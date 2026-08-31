@@ -80,6 +80,12 @@
   </div>
 </nav>
 
+<div id="resumeBar" style="display:none;background:var(--forest);color:var(--cream);padding:12px 18px;text-align:center;font-family:var(--sans);font-size:.86rem">
+  <span id="resumeText" style="margin-right:10px"></span>
+  <a id="resumeLink" href="#" style="color:var(--gold-light);font-weight:600;text-decoration:none;border-bottom:1px solid var(--gold-light);white-space:nowrap">Open my order →</a>
+  <button id="resumeHide" style="background:none;border:none;color:rgba(247,244,238,.6);margin-left:14px;cursor:pointer;font-size:1rem" aria-label="Dismiss">✕</button>
+</div>
+
 <header class="hero">
   <canvas id="gold-dust"></canvas>
   <div class="hero-inner">
@@ -203,6 +209,18 @@
   // reveals
   const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } }), { threshold:.12 });
   document.querySelectorAll('.reveal:not(.in)').forEach(el => io.observe(el));
+  // welcome back: surface the most recent order remembered on this device
+  try {
+    const list = JSON.parse(localStorage.getItem('poruwe_orders') || '[]');
+    if (list.length && !sessionStorage.getItem('poruwe_resume_hidden')) {
+      const o = list[0];
+      const labels = { draft: 'is still a draft', pending_payment: 'is awaiting payment', pending_verification: 'is being verified', active: 'is live 🎉' };
+      document.getElementById('resumeText').textContent = `Welcome back — your ${o.tpl} invitation (${o.no}) ${labels[o.st] || 'is saved'}.`;
+      document.getElementById('resumeLink').href = '/status/' + o.t;
+      document.getElementById('resumeBar').style.display = 'block';
+      document.getElementById('resumeHide').onclick = () => { document.getElementById('resumeBar').style.display = 'none'; sessionStorage.setItem('poruwe_resume_hidden', '1'); };
+    }
+  } catch (e) {}
 </script>
 </body>
 </html>

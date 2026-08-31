@@ -87,7 +87,8 @@
       <% } %>
     </div>
     <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:26px">
-      <% if (s.rsvpWa) { %><a class="btn" href="https://wa.me/<%= s.rsvpWa %>?text=<%= encodeURIComponent('Hello ' + s.groom + ' and ' + s.bride + '! We would love to celebrate with you. — RSVP') %>" target="_blank" rel="noopener">RSVP on WhatsApp</a><% } %>
+      <% if (s.rsvpWa && preview) { %><a class="btn" href="#" onclick="alert('This is a preview — RSVP starts working the moment your invitation is published.');return false">RSVP on WhatsApp</a>
+      <% } else if (s.rsvpWa) { %><a class="btn" href="https://wa.me/<%= s.rsvpWa %>?text=<%= encodeURIComponent('Hello ' + s.groom + ' and ' + s.bride + '! We would love to celebrate with you. — RSVP') %>" target="_blank" rel="noopener">RSVP on WhatsApp</a><% } %>
       <a class="btn line" href="https://www.google.com/maps/search/?api=1&query=<%= encodeURIComponent(s.mapQuery) %>" target="_blank" rel="noopener">Directions</a>
     </div>
   </div>

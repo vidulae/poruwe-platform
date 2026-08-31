@@ -173,10 +173,20 @@ app.get('/b/:token', asyncH(async (req, res) => {
   res.render('builder', { order, tpl, formatLKR });
 }));
 
+const PREVIEW_TTL_H = +(process.env.PREVIEW_TTL_HOURS || 72);
 app.get('/p/:token', asyncH(async (req, res) => {
   const order = await store.orderByToken(req.params.token);
   if (!order) return res.status(404).render('notfound');
+  if (['expired', 'revoked'].includes(order.status)) return res.status(410).render('gone');
   const preview = order.status !== 'active';
+  // Unpaid previews go stale: a watermarked preview must not become a free invitation.
+  // Paid orders awaiting verification are exempt.
+  if (['draft', 'pending_payment', 'rejected'].includes(order.status)) {
+    const age = Date.now() - new Date(order.updated_at).getTime();
+    if (age > PREVIEW_TTL_H * 3600e3) {
+      return res.status(410).render('preview-expired', { order, ttlHours: PREVIEW_TTL_H });
+    }
+  }
   if (order.kind === 'website') return renderWebsite(req, res, order, { preview });
   if (order.kind === 'pdf') {
     const buf = await buildInvitationPdf(derive(order.data), { preview });
@@ -206,7 +216,12 @@ app.get('/status/:token', asyncH(async (req, res) => {
   if (!order) return res.status(404).render('notfound');
   const tpl = await store.getTemplate(order.template_id);
   const settings = await store.allSettings();
-  res.render('status', { order, tpl, formatLKR, liveUrl: order.slug ? `${baseUrl(req)}/i/${order.slug}` : null, support: settings.supportWhatsapp || '' });
+  res.render('status', {
+    order, tpl, formatLKR,
+    liveUrl: order.slug ? `${baseUrl(req)}/i/${order.slug}` : null,
+    statusUrl: `${baseUrl(req)}/status/${order.token}`,
+    support: settings.supportWhatsapp || '',
+  });
 }));
 
 app.get('/receipt/:token.pdf', asyncH(async (req, res) => {

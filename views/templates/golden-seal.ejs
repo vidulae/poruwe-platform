@@ -991,6 +991,10 @@
   const WA_NUMBER = '<%= s.rsvpWa %>';
   form.addEventListener('submit', (e) => {
     e.preventDefault();
+    <% if (preview) { %>
+    alert('This is a preview — the RSVP form starts working the moment your invitation is published.');
+    return;
+    <% } %>
     const name = document.getElementById('name').value.trim();
     const phone = document.getElementById('phone').value.trim();
     if (!name || !phone){

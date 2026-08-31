@@ -92,11 +92,35 @@
     <div class="panelbox"><h3>This invitation has concluded</h3><p>All personal data has been permanently removed, as promised.</p></div>
   <% } %>
 
+  <% if (!['expired','revoked'].includes(order.status)) { %>
+  <div class="panelbox" style="text-align:center;border-color:var(--gold);background:rgba(198,161,79,.07)">
+    <h3 style="font-size:1.3rem">Keep this page safe</h3>
+    <p style="font-size:.98rem;margin-bottom:16px">This link is your key to your order — the live invitation, downloads and receipt all live here. Save it before you close this window.</p>
+    <div class="actions" style="margin-bottom:0">
+      <button class="btn btn-gold" id="copyStatus">Copy my link</button>
+      <a class="btn btn-line" href="https://wa.me/?text=<%= encodeURIComponent('My Poruwe wedding invitation — order ' + order.order_no + '. Status, link & receipt: ' + statusUrl) %>" target="_blank" rel="noopener">Save to WhatsApp</a>
+    </div>
+    <p class="hint" style="margin-top:12px">Tip: “Save to WhatsApp” lets you send it to yourself or your partner — it'll always be in your chats.</p>
+  </div>
+  <% } %>
+
   <div class="actions" style="margin-top:26px">
     <a class="btn btn-ghost" href="/receipt/<%= order.token %>">View receipt</a>
     <a class="btn btn-ghost" href="/receipt/<%= order.token %>.pdf">Receipt PDF</a>
     <% if (support) { %><a class="btn btn-ghost" href="https://wa.me/<%= support %>" target="_blank" rel="noopener">WhatsApp support</a><% } %>
   </div>
 </div>
+<script>
+  document.getElementById('copyStatus') && (document.getElementById('copyStatus').onclick = function () {
+    navigator.clipboard.writeText('<%= statusUrl %>').then(() => { this.textContent = 'Copied ✓'; });
+  });
+  // Remember this order on this device so the landing page can bring the user back
+  try {
+    var K = 'poruwe_orders';
+    var list = JSON.parse(localStorage.getItem(K) || '[]').filter(function (o) { return o.t !== '<%= order.token %>'; });
+    list.unshift({ t: '<%= order.token %>', no: '<%= order.order_no %>', tpl: '<%= tpl.name %>', st: '<%= order.status %>', at: Date.now() });
+    localStorage.setItem(K, JSON.stringify(list.slice(0, 5)));
+  } catch (e) {}
+</script>
 </body>
 </html>
