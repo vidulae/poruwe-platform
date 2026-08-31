@@ -8,62 +8,64 @@
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Italiana&family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet" />
-<link rel="stylesheet" href="/public/poruwe.css" />
+<link rel="stylesheet" href="/public/poruwe.css?v=2" />
 <style>
-  .hero{position:relative;min-height:88vh;display:flex;align-items:center;justify-content:center;text-align:center;overflow:hidden;
-    background:radial-gradient(1200px 500px at 50% -10%, rgba(200,162,75,.16), transparent 60%), var(--cream)}
+  .hero{position:relative;min-height:82vh;display:flex;align-items:center;justify-content:center;text-align:center;overflow:hidden;
+    background:radial-gradient(1100px 480px at 50% -10%, rgba(198,161,79,.2), transparent 62%), var(--cream)}
   #gold-dust{position:absolute;inset:0;pointer-events:none}
-  .hero-inner{position:relative;z-index:2;max-width:860px;padding:80px 24px}
-  .hero .script{font-family:var(--script);font-size:clamp(1.2rem,3vw,1.7rem);color:var(--gold-deep);letter-spacing:.14em;margin-bottom:18px}
-  .hero h1{font-size:clamp(2.6rem,7vw,4.6rem);letter-spacing:.02em;margin-bottom:22px}
+  .hero-inner{position:relative;z-index:2;max-width:880px;padding:72px 22px}
+  .hero .script{font-family:var(--script);font-size:clamp(1.15rem,3.4vw,1.7rem);color:var(--gold-deep);letter-spacing:.12em;margin-bottom:20px}
+  .hero h1{font-size:clamp(2.5rem,8.4vw,4.8rem);font-weight:500;letter-spacing:.01em;margin-bottom:24px}
   .hero h1 em{font-style:italic;color:var(--gold-deep)}
-  .hero p.lede{max-width:600px;margin:0 auto 38px;font-size:1.15rem}
+  .hero p.lede{font-family:var(--serif);max-width:620px;margin:0 auto 40px;font-size:clamp(1.15rem,3.4vw,1.32rem);color:var(--body);line-height:1.65}
   .hero-cta{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
-  .strip{background:var(--forest);color:var(--cream);text-align:center;padding:18px 24px;font-family:var(--sans);font-size:.72rem;letter-spacing:.24em;text-transform:uppercase}
+  @media(max-width:560px){.hero-cta{flex-direction:column;align-items:stretch;max-width:340px;margin:0 auto}.hero-inner{padding:56px 22px}}
+  .strip{background:var(--forest);color:var(--cream);text-align:center;padding:18px 20px;font-family:var(--sans);font-size:.76rem;font-weight:500;letter-spacing:.14em;text-transform:uppercase;line-height:2}
   .strip b{color:var(--gold-light);font-weight:600}
-  .section{padding:110px 0}
-  .sec-head{text-align:center;margin-bottom:64px}
-  .sec-head h2{font-size:clamp(2rem,5vw,3.1rem);margin-top:10px}
-  .tpl-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:30px}
+  .section{padding:clamp(70px,10vw,110px) 0}
+  .sec-head{text-align:center;margin-bottom:clamp(40px,7vw,64px)}
+  .sec-head h2{font-size:clamp(2.1rem,6.4vw,3.2rem);margin-top:12px}
+  .tpl-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(320px,100%),1fr));gap:26px}
   .tpl-card{display:flex;flex-direction:column;overflow:hidden;transition:transform .4s var(--ease),box-shadow .4s var(--ease)}
-  .tpl-card:hover{transform:translateY(-6px);box-shadow:0 34px 70px -34px rgba(26,44,37,.5)}
-  .tpl-thumb{height:220px;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden}
-  .thumb-website{background:linear-gradient(160deg,#efe9dc, #F6F3ED 55%, #e9e0cd)}
+  .tpl-card:hover{transform:translateY(-6px);box-shadow:var(--shadow)}
+  .tpl-thumb{height:216px;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden}
+  .thumb-website{background:linear-gradient(160deg,#EFE8D9, #F7F4EE 55%, #E8DFC9)}
   .thumb-website.dark{background:linear-gradient(160deg,#0F1A15,#16261E 60%,#0C1511)}
-  .thumb-pdf{background:linear-gradient(160deg,#f3efe6,#efe7d5)}
+  .thumb-pdf{background:linear-gradient(160deg,#F3EFE4,#EDE4CE)}
   .thumb-image{background:linear-gradient(160deg,#14231C,#1E332A)}
-  .mini-frame{width:150px;height:186px;border:1.5px solid var(--gold);border-radius:4px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;background:rgba(253,251,246,.55);backdrop-filter:blur(2px)}
-  .dark .mini-frame,.thumb-image .mini-frame{background:rgba(16,27,22,.55)}
-  .mini-mono{font-family:var(--serif);font-style:italic;font-size:.95rem;color:var(--gold-deep)}
+  .mini-frame{width:152px;height:184px;border:1.5px solid var(--gold);border-radius:6px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;background:rgba(255,253,248,.6);backdrop-filter:blur(2px);box-shadow:0 18px 34px -18px rgba(16,31,25,.35)}
+  .dark .mini-frame,.thumb-image .mini-frame{background:rgba(16,27,22,.6)}
+  .mini-mono{font-family:var(--serif);font-style:italic;font-size:1rem;color:var(--gold-deep)}
   .dark .mini-mono,.thumb-image .mini-mono{color:var(--gold-light)}
-  .mini-names{font-family:var(--serif);font-weight:500;font-size:1.05rem;letter-spacing:.12em;color:var(--ink);text-transform:uppercase;text-align:center;line-height:1.35}
-  .dark .mini-names,.thumb-image .mini-names{color:#F1ECDF}
+  .mini-names{font-family:var(--serif);font-weight:600;font-size:1.08rem;letter-spacing:.1em;color:var(--ink);text-transform:uppercase;text-align:center;line-height:1.35}
+  .dark .mini-names,.thumb-image .mini-names{color:#F2EEE2}
   .mini-line{width:44px;height:1px;background:var(--gold)}
-  .mini-date{font-family:var(--sans);font-size:.5rem;letter-spacing:.26em;color:var(--gold-deep)}
+  .mini-date{font-family:var(--sans);font-size:.62rem;font-weight:600;letter-spacing:.2em;color:var(--gold-deep)}
   .dark .mini-date,.thumb-image .mini-date{color:var(--gold-light)}
-  .tpl-body{padding:26px 26px 28px;display:flex;flex-direction:column;gap:12px;flex:1}
-  .tpl-top{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
-  .tpl-body h3{font-size:1.65rem;font-weight:400}
-  .tpl-body .tag{font-size:1rem;color:var(--muted);flex:1}
-  .tpl-foot{display:flex;align-items:center;justify-content:space-between;margin-top:10px;gap:10px}
-  .price{font-family:var(--sans);font-weight:600;font-size:1rem;color:var(--ink);letter-spacing:.04em}
-  .price.free{color:#38624c}
-  .steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:26px;counter-reset:step}
-  .step{text-align:center;padding:34px 22px}
-  .step .n{width:52px;height:52px;margin:0 auto 16px;border-radius:50%;border:1.5px solid var(--gold);display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-size:1.4rem;color:var(--gold-deep)}
-  .step h4{font-size:1.3rem;margin-bottom:8px}
-  .step p{font-size:.98rem}
-  .privacy{background:var(--forest);color:var(--cream);border-radius:8px;padding:54px 40px;display:flex;gap:30px;align-items:center;flex-wrap:wrap}
+  .tpl-body{padding:24px 24px 26px;display:flex;flex-direction:column;gap:12px;flex:1}
+  .tpl-top{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .tpl-body h3{font-size:1.7rem;font-weight:500}
+  .tpl-body .tag{font-family:var(--serif);font-size:1.12rem;color:var(--body);flex:1;line-height:1.55}
+  .tpl-foot{display:flex;align-items:center;justify-content:space-between;margin-top:8px;gap:12px;flex-wrap:wrap}
+  .price{font-family:var(--sans);font-weight:600;font-size:1.06rem;color:var(--ink);letter-spacing:.03em;font-variant-numeric:tabular-nums}
+  .price.free{color:#2E5A43}
+  .demo-link{font-family:var(--sans);font-size:.76rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase}
+  .steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(220px,100%),1fr));gap:22px}
+  .step{text-align:center;padding:30px 20px}
+  .step .n{width:54px;height:54px;margin:0 auto 16px;border-radius:50%;border:1.5px solid var(--gold);display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-size:1.5rem;color:var(--gold-deep);background:var(--ivory)}
+  .step h4{font-size:1.4rem;margin-bottom:8px}
+  .step p{font-size:.95rem;color:var(--body)}
+  .privacy{background:var(--forest);color:var(--cream);border-radius:14px;padding:clamp(34px,6vw,54px) clamp(24px,5vw,44px);display:flex;gap:28px;align-items:center;flex-wrap:wrap;box-shadow:var(--shadow)}
   .privacy .ic{width:64px;height:64px;border-radius:50%;border:1.5px solid var(--gold);display:flex;align-items:center;justify-content:center;flex-shrink:0}
-  .privacy h3{color:var(--cream);font-size:1.7rem;margin-bottom:8px}
-  .privacy p{color:rgba(246,243,237,.8);max-width:640px}
+  .privacy h3{color:var(--cream);font-size:1.8rem;margin-bottom:10px}
+  .privacy p{color:rgba(247,244,238,.88);max-width:640px;font-size:1.02rem}
   .privacy b{color:var(--gold-light)}
   .faq{max-width:760px;margin:0 auto}
-  .faq details{border-bottom:1px solid var(--border);padding:20px 4px}
-  .faq summary{font-family:var(--serif);font-size:1.25rem;color:var(--ink);cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center}
-  .faq summary::after{content:'+';font-family:var(--sans);color:var(--gold-deep);font-size:1.2rem;transition:transform .3s}
+  .faq details{border-bottom:1px solid var(--line);padding:20px 4px}
+  .faq summary{font-family:var(--serif);font-weight:500;font-size:1.32rem;color:var(--ink);cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center;gap:14px}
+  .faq summary::after{content:'+';font-family:var(--sans);color:var(--gold-deep);font-size:1.25rem;transition:transform .3s;flex-shrink:0}
   .faq details[open] summary::after{transform:rotate(45deg)}
-  .faq p{margin-top:12px;font-size:1rem}
+  .faq p{margin-top:12px;font-size:1rem;color:var(--body)}
 </style>
 </head>
 <body>
@@ -74,7 +76,7 @@
     <a href="#templates">Templates</a>
     <a href="#how">How it works</a>
     <a href="/i/demo" target="_blank" rel="noopener">Live demo</a>
-    <a class="btn btn-line" style="min-height:40px;padding:0 22px" href="#templates">Create yours</a>
+    <a class="btn btn-gold" style="min-height:42px;padding:0 20px;font-size:.72rem" href="#templates">Create yours</a>
   </div>
 </nav>
 
@@ -121,7 +123,7 @@
             <span class="price <%= t.price_lkr === 0 ? 'free' : '' %>"><%= formatLKR(t.price_lkr) %></span>
             <a class="btn btn-gold" style="min-height:42px;padding:0 22px" href="/start/<%= t.id %>">Use this</a>
           </div>
-          <% if (t.id === 'golden-seal') { %><a href="/i/demo" target="_blank" rel="noopener" style="font-family:var(--sans);font-size:.7rem;letter-spacing:.18em;text-transform:uppercase">View live demo →</a><% } %>
+          <% if (t.id === 'golden-seal') { %><a class="demo-link" href="/i/demo" target="_blank" rel="noopener">View live demo →</a><% } %>
         </div>
       </div>
       <% }) %>

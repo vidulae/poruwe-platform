@@ -7,29 +7,32 @@
 <meta name="robots" content="noindex" />
 <% if (['draft','pending_payment','pending_verification'].includes(order.status)) { %><meta http-equiv="refresh" content="25" /><% } %>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Italiana&family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet" />
-<link rel="stylesheet" href="/public/poruwe.css" />
+<link rel="stylesheet" href="/public/poruwe.css?v=2" />
 <style>
-  .swrap{max-width:680px;margin:0 auto;padding:50px 20px 90px;text-align:center}
-  .badge{display:inline-block;font-family:var(--sans);font-size:.66rem;font-weight:600;letter-spacing:.24em;text-transform:uppercase;padding:8px 18px;border-radius:24px;margin-bottom:20px}
-  .b-draft{background:#eee7d8;color:#8a6a25}
-  .b-pending{background:#efe7d8;color:#8a6a25}
-  .b-active{background:var(--gold);color:var(--forest)}
-  .b-bad{background:#e8dede;color:#7a3b3b}
-  .swrap h1{font-size:2.4rem;margin-bottom:12px}
-  .swrap .sub{margin-bottom:34px}
-  .flow{display:flex;justify-content:center;gap:0;margin-bottom:40px}
-  .fstep{flex:1;max-width:150px;position:relative;font-family:var(--sans);font-size:.6rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);padding-top:26px}
-  .fstep::before{content:'';position:absolute;top:8px;left:50%;transform:translateX(-50%);width:12px;height:12px;border-radius:50%;background:var(--cream);border:2px solid rgba(200,162,75,.4)}
-  .fstep::after{content:'';position:absolute;top:13px;left:calc(50% + 10px);right:calc(-50% + 10px);height:2px;background:rgba(200,162,75,.25)}
+  .swrap{max-width:680px;margin:0 auto;padding:44px 18px 90px;text-align:center}
+  .badge{display:inline-block;font-family:var(--sans);font-size:.74rem;font-weight:600;letter-spacing:.18em;text-transform:uppercase;padding:9px 20px;border-radius:24px;margin-bottom:20px}
+  .b-draft{background:#EDE5D2;color:#7A5B1E}
+  .b-pending{background:#F0E6CF;color:#7A5B1E}
+  .b-active{background:var(--grad-gold);color:var(--forest-2)}
+  .b-bad{background:#EBDCD8;color:#8A3E30}
+  .swrap h1{font-size:clamp(2rem,7vw,2.5rem);margin-bottom:10px}
+  .swrap .sub{font-family:var(--serif);font-size:1.15rem;color:var(--body);margin-bottom:32px}
+  .flow{display:flex;justify-content:center;gap:0;margin-bottom:38px}
+  .fstep{flex:1;max-width:150px;position:relative;font-family:var(--sans);font-size:.68rem;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);padding:26px 4px 0}
+  .fstep::before{content:'';position:absolute;top:7px;left:50%;transform:translateX(-50%);width:13px;height:13px;border-radius:50%;background:var(--cream);border:2px solid rgba(198,161,79,.45)}
+  .fstep::after{content:'';position:absolute;top:13px;left:calc(50% + 11px);right:calc(-50% + 11px);height:2px;background:rgba(198,161,79,.3)}
   .fstep:last-child::after{display:none}
   .fstep.done::before{background:var(--gold);border-color:var(--gold)}
   .fstep.done{color:var(--gold-deep);font-weight:600}
-  .linkbox{background:var(--forest);color:var(--cream);border-radius:10px;padding:34px 26px;margin-bottom:26px}
-  .linkbox .lu{font-family:var(--sans);font-size:1.02rem;color:var(--gold-light);word-break:break-all;margin:12px 0 20px;display:block}
+  @media(max-width:460px){.fstep{font-size:.6rem;letter-spacing:.04em}}
+  .linkbox{background:var(--forest);color:var(--cream);border-radius:14px;padding:clamp(26px,5vw,36px) clamp(18px,4vw,28px);margin-bottom:26px;box-shadow:var(--shadow)}
+  .linkbox .lu{font-family:var(--sans);font-size:clamp(.92rem,3vw,1.05rem);font-weight:500;color:var(--gold-light);word-break:break-all;margin:14px 0 22px;display:block}
   .actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:14px}
-  .note{font-size:.95rem;font-style:italic}
-  .panelbox{background:var(--ivory);border:1px solid var(--border);border-radius:10px;padding:30px;margin-bottom:26px;text-align:left}
-  .panelbox h3{font-size:1.4rem;margin-bottom:10px}
+  @media(max-width:520px){.actions .btn{flex:1 1 100%}}
+  .note{font-family:var(--serif);font-size:1.02rem;font-style:italic;color:var(--body)}
+  .panelbox{background:var(--ivory);border:1px solid var(--line);border-radius:14px;padding:clamp(22px,5vw,30px);margin-bottom:26px;text-align:left;box-shadow:var(--shadow-sm)}
+  .panelbox h3{font-size:1.5rem;margin-bottom:10px}
+  .panelbox p{font-size:1rem}
 </style>
 </head>
 <body>

@@ -6,7 +6,7 @@
 <title>Receipt <%= order.order_no %> · Poruwe</title>
 <meta name="robots" content="noindex" />
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Italiana&family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet" />
-<link rel="stylesheet" href="/public/poruwe.css" />
+<link rel="stylesheet" href="/public/poruwe.css?v=2" />
 <style>
   .rwrap{max-width:640px;margin:40px auto 80px;padding:0 20px}
   .rcard{background:var(--ivory);border:1px solid var(--border);border-radius:10px;overflow:hidden;box-shadow:var(--shadow)}
@@ -15,8 +15,8 @@
   .rhead .no{font-family:var(--sans);font-size:.8rem;letter-spacing:.16em;text-align:right}
   .rhead .no b{display:block;color:var(--gold-light);font-size:1rem;margin-top:4px}
   .rbody{padding:34px}
-  .rrow{display:flex;justify-content:space-between;gap:16px;padding:10px 0;border-bottom:1px dashed rgba(200,162,75,.3);font-size:1.02rem}
-  .rrow .k{font-family:var(--sans);font-size:.66rem;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);padding-top:4px}
+  .rrow{display:flex;justify-content:space-between;gap:16px;padding:11px 0;border-bottom:1px dashed rgba(198,161,79,.32);font-size:1.02rem;flex-wrap:wrap}
+  .rrow .k{font-family:var(--sans);font-size:.72rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);padding-top:4px}
   .rrow .v{color:var(--ink);text-align:right}
   .rtotal{display:flex;justify-content:space-between;align-items:center;padding:20px 0 6px}
   .rtotal .amt{font-family:var(--serif);font-size:1.9rem;color:var(--gold-deep)}

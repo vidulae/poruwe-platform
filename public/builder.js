@@ -204,7 +204,7 @@
     }
     payMethod = checkout.methods[0];
     box.innerHTML = `
-      <div class="price-line"><span style="font-size:.72rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted)">Total</span><span class="amt">${checkout.priceDisplay}</span></div>
+      <div class="price-line"><span class="lbl-t">Total</span><span class="amt">${checkout.priceDisplay}</span></div>
       <div class="method-tabs">${checkout.methods.map((m) => `<div class="mtab ${m === payMethod ? 'sel' : ''}" data-m="${m}">${m === 'manual' ? 'Bank transfer' : 'Card / PayHere'}</div>`).join('')}</div>
       <div id="methodBody"></div>`;
     box.querySelectorAll('.mtab').forEach((t) => t.onclick = () => { payMethod = t.dataset.m; box.querySelectorAll('.mtab').forEach((x) => x.classList.toggle('sel', x === t)); renderMethod(); });
