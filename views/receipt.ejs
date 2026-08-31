@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Receipt <%= order.order_no %> · Poruwe</title>
+<meta name="robots" content="noindex" />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Italiana&family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="/public/poruwe.css" />
+<style>
+  .rwrap{max-width:640px;margin:40px auto 80px;padding:0 20px}
+  .rcard{background:var(--ivory);border:1px solid var(--border);border-radius:10px;overflow:hidden;box-shadow:var(--shadow)}
+  .rhead{background:var(--forest);color:var(--cream);padding:30px 34px;display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap}
+  .rhead .wm{font-family:var(--script);font-size:1.9rem;color:var(--gold)}
+  .rhead .no{font-family:var(--sans);font-size:.8rem;letter-spacing:.16em;text-align:right}
+  .rhead .no b{display:block;color:var(--gold-light);font-size:1rem;margin-top:4px}
+  .rbody{padding:34px}
+  .rrow{display:flex;justify-content:space-between;gap:16px;padding:10px 0;border-bottom:1px dashed rgba(200,162,75,.3);font-size:1.02rem}
+  .rrow .k{font-family:var(--sans);font-size:.66rem;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);padding-top:4px}
+  .rrow .v{color:var(--ink);text-align:right}
+  .rtotal{display:flex;justify-content:space-between;align-items:center;padding:20px 0 6px}
+  .rtotal .amt{font-family:var(--serif);font-size:1.9rem;color:var(--gold-deep)}
+  .stamp{display:inline-block;border:2px solid;border-radius:6px;padding:8px 22px;font-family:var(--sans);font-weight:600;letter-spacing:.3em;text-transform:uppercase;font-size:.85rem;transform:rotate(-6deg)}
+  .paid{color:var(--gold-deep);border-color:var(--gold-deep)}
+  .pending{color:var(--muted);border-color:var(--muted)}
+  .racts{display:flex;gap:12px;justify-content:center;margin-top:26px;flex-wrap:wrap}
+  @media print {.pnav,.racts{display:none}.rcard{box-shadow:none;border-color:#bbb}}
+</style>
+</head>
+<body>
+<nav class="pnav"><a class="wordmark" href="/">Poruwe</a><div class="links"><a href="/status/<%= order.token %>">Order status</a></div></nav>
+<div class="rwrap">
+  <div class="rcard">
+    <div class="rhead">
+      <div><div class="wm">Poruwe</div><div style="font-family:var(--sans);font-size:.6rem;letter-spacing:.24em;opacity:.75">OFFICIAL RECEIPT</div></div>
+      <div class="no">RECEIPT NO<b><%= order.order_no %></b></div>
+    </div>
+    <div class="rbody">
+      <% const pay = order.payment || {}; const c = (order.data && order.data.customer) || {}; const cp = (order.data && order.data.couple) || {}; %>
+      <div class="rrow"><span class="k">Billed to</span><span class="v"><%= c.name || '—' %><%= c.wa ? ' · +' + c.wa : '' %></span></div>
+      <div class="rrow"><span class="k">Wedding of</span><span class="v"><%= cp.groom || '—' %> &amp; <%= cp.bride || '—' %></span></div>
+      <div class="rrow"><span class="k">Item</span><span class="v"><%= tpl.name %> — <%= tpl.kind === 'website' ? 'Invitation Website' : tpl.kind === 'pdf' ? 'Printable PDF Invitation' : 'Invitation Image' %></span></div>
+      <div class="rrow"><span class="k">Payment method</span><span class="v"><%= pay.method === 'manual' ? 'Bank transfer' : pay.method === 'payhere' ? 'PayHere (online)' : pay.method === 'free' ? 'Free template' : '—' %></span></div>
+      <% if (pay.reference) { %><div class="rrow"><span class="k">Reference</span><span class="v"><%= pay.reference %></span></div><% } %>
+      <div class="rrow" style="border-bottom:none"><span class="k">Payment date</span><span class="v"><%= pay.paidAt ? new Date(pay.paidAt).toLocaleDateString('en-GB',{day:'2-digit',month:'long',year:'numeric',timeZone:'Asia/Colombo'}) : 'Pending verification' %></span></div>
+      <div class="rtotal">
+        <span class="stamp <%= pay.paidAt ? 'paid' : 'pending' %>"><%= pay.paidAt ? 'Paid' : 'Pending' %></span>
+        <span class="amt"><%= formatLKR(pay.amount != null ? pay.amount : tpl.price_lkr) %></span>
+      </div>
+      <p style="font-size:.85rem;margin-top:18px;font-style:italic">Generated electronically — valid without signature. All invitation content and personal data are automatically deleted 3 days after the wedding date.</p>
+    </div>
+  </div>
+  <div class="racts">
+    <a class="btn btn-gold" href="/receipt/<%= order.token %>.pdf">Download PDF</a>
+    <button class="btn btn-line" onclick="print()">Print</button>
+  </div>
+</div>
+</body>
+</html>

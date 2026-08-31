@@ -1,0 +1,21 @@
+{
+  "name": "poruwe-platform",
+  "version": "1.0.0",
+  "description": "Poruwe — wedding invitation platform: builder, payments, invitation hosting, receipts",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@resvg/resvg-js": "^2.6.2",
+    "ejs": "^3.1.10",
+    "express": "^4.21.2",
+    "pdfkit": "^0.15.2",
+    "pg": "^8.13.1",
+    "satori": "^0.12.2"
+  }
+}

@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Poruwe — Wedding Invitations, Sealed with Love</title>
+<meta name="description" content="Create a luxury wedding invitation in minutes — cinematic invitation websites, printable PDF cards and share-ready images. Made in Sri Lanka. From free to LKR 7,900." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Italiana&family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="/public/poruwe.css" />
+<style>
+  .hero{position:relative;min-height:88vh;display:flex;align-items:center;justify-content:center;text-align:center;overflow:hidden;
+    background:radial-gradient(1200px 500px at 50% -10%, rgba(200,162,75,.16), transparent 60%), var(--cream)}
+  #gold-dust{position:absolute;inset:0;pointer-events:none}
+  .hero-inner{position:relative;z-index:2;max-width:860px;padding:80px 24px}
+  .hero .script{font-family:var(--script);font-size:clamp(1.2rem,3vw,1.7rem);color:var(--gold-deep);letter-spacing:.14em;margin-bottom:18px}
+  .hero h1{font-size:clamp(2.6rem,7vw,4.6rem);letter-spacing:.02em;margin-bottom:22px}
+  .hero h1 em{font-style:italic;color:var(--gold-deep)}
+  .hero p.lede{max-width:600px;margin:0 auto 38px;font-size:1.15rem}
+  .hero-cta{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+  .strip{background:var(--forest);color:var(--cream);text-align:center;padding:18px 24px;font-family:var(--sans);font-size:.72rem;letter-spacing:.24em;text-transform:uppercase}
+  .strip b{color:var(--gold-light);font-weight:600}
+  .section{padding:110px 0}
+  .sec-head{text-align:center;margin-bottom:64px}
+  .sec-head h2{font-size:clamp(2rem,5vw,3.1rem);margin-top:10px}
+  .tpl-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:30px}
+  .tpl-card{display:flex;flex-direction:column;overflow:hidden;transition:transform .4s var(--ease),box-shadow .4s var(--ease)}
+  .tpl-card:hover{transform:translateY(-6px);box-shadow:0 34px 70px -34px rgba(26,44,37,.5)}
+  .tpl-thumb{height:220px;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden}
+  .thumb-website{background:linear-gradient(160deg,#efe9dc, #F6F3ED 55%, #e9e0cd)}
+  .thumb-website.dark{background:linear-gradient(160deg,#0F1A15,#16261E 60%,#0C1511)}
+  .thumb-pdf{background:linear-gradient(160deg,#f3efe6,#efe7d5)}
+  .thumb-image{background:linear-gradient(160deg,#14231C,#1E332A)}
+  .mini-frame{width:150px;height:186px;border:1.5px solid var(--gold);border-radius:4px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;background:rgba(253,251,246,.55);backdrop-filter:blur(2px)}
+  .dark .mini-frame,.thumb-image .mini-frame{background:rgba(16,27,22,.55)}
+  .mini-mono{font-family:var(--serif);font-style:italic;font-size:.95rem;color:var(--gold-deep)}
+  .dark .mini-mono,.thumb-image .mini-mono{color:var(--gold-light)}
+  .mini-names{font-family:var(--serif);font-weight:500;font-size:1.05rem;letter-spacing:.12em;color:var(--ink);text-transform:uppercase;text-align:center;line-height:1.35}
+  .dark .mini-names,.thumb-image .mini-names{color:#F1ECDF}
+  .mini-line{width:44px;height:1px;background:var(--gold)}
+  .mini-date{font-family:var(--sans);font-size:.5rem;letter-spacing:.26em;color:var(--gold-deep)}
+  .dark .mini-date,.thumb-image .mini-date{color:var(--gold-light)}
+  .tpl-body{padding:26px 26px 28px;display:flex;flex-direction:column;gap:12px;flex:1}
+  .tpl-top{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+  .tpl-body h3{font-size:1.65rem;font-weight:400}
+  .tpl-body .tag{font-size:1rem;color:var(--muted);flex:1}
+  .tpl-foot{display:flex;align-items:center;justify-content:space-between;margin-top:10px;gap:10px}
+  .price{font-family:var(--sans);font-weight:600;font-size:1rem;color:var(--ink);letter-spacing:.04em}
+  .price.free{color:#38624c}
+  .steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:26px;counter-reset:step}
+  .step{text-align:center;padding:34px 22px}
+  .step .n{width:52px;height:52px;margin:0 auto 16px;border-radius:50%;border:1.5px solid var(--gold);display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-size:1.4rem;color:var(--gold-deep)}
+  .step h4{font-size:1.3rem;margin-bottom:8px}
+  .step p{font-size:.98rem}
+  .privacy{background:var(--forest);color:var(--cream);border-radius:8px;padding:54px 40px;display:flex;gap:30px;align-items:center;flex-wrap:wrap}
+  .privacy .ic{width:64px;height:64px;border-radius:50%;border:1.5px solid var(--gold);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .privacy h3{color:var(--cream);font-size:1.7rem;margin-bottom:8px}
+  .privacy p{color:rgba(246,243,237,.8);max-width:640px}
+  .privacy b{color:var(--gold-light)}
+  .faq{max-width:760px;margin:0 auto}
+  .faq details{border-bottom:1px solid var(--border);padding:20px 4px}
+  .faq summary{font-family:var(--serif);font-size:1.25rem;color:var(--ink);cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center}
+  .faq summary::after{content:'+';font-family:var(--sans);color:var(--gold-deep);font-size:1.2rem;transition:transform .3s}
+  .faq details[open] summary::after{transform:rotate(45deg)}
+  .faq p{margin-top:12px;font-size:1rem}
+</style>
+</head>
+<body>
+
+<nav class="pnav">
+  <a class="wordmark" href="/">Poruwe</a>
+  <div class="links">
+    <a href="#templates">Templates</a>
+    <a href="#how">How it works</a>
+    <a href="/i/demo" target="_blank" rel="noopener">Live demo</a>
+    <a class="btn btn-line" style="min-height:40px;padding:0 22px" href="#templates">Create yours</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <canvas id="gold-dust"></canvas>
+  <div class="hero-inner">
+    <p class="script reveal in">wedding invitations, sealed with love</p>
+    <h1 class="reveal in">Invite them to the most<br>beautiful day of your <em>life</em></h1>
+    <p class="lede reveal in">Cinematic invitation websites, printable cards and share-ready images — crafted in minutes, delivered with a wax-seal moment your guests will never forget.</p>
+    <div class="hero-cta reveal in">
+      <a class="btn btn-gold" href="#templates">Choose a template</a>
+      <a class="btn btn-line" href="/i/demo" target="_blank" rel="noopener">Open the live demo</a>
+    </div>
+  </div>
+</header>
+
+<div class="strip">From <b>FREE</b> to <b>LKR 7,900</b> · websites · printable PDFs · WhatsApp cards · auto-private after your wedding</div>
+
+<section class="section" id="templates">
+  <div class="container">
+    <div class="sec-head reveal">
+      <span class="eyebrow">The Collection</span>
+      <h2>Choose your invitation</h2>
+    </div>
+    <div class="tpl-grid">
+      <% templates.forEach(function(t){ %>
+      <div class="tpl-card panel reveal">
+        <div class="tpl-thumb thumb-<%= t.kind %> <%= t.id === 'midnight-poruwa' ? 'dark' : '' %>">
+          <div class="mini-frame">
+            <div class="mini-mono">S &amp; D</div>
+            <div class="mini-names">Sahan<br>&amp; Dilini</div>
+            <div class="mini-line"></div>
+            <div class="mini-date"><%= t.kind === 'website' ? 'TAP TO OPEN' : (t.kind === 'pdf' ? 'PRINTABLE PDF' : 'SHARE-READY') %></div>
+          </div>
+        </div>
+        <div class="tpl-body">
+          <div class="tpl-top">
+            <span class="tier-badge tier-<%= t.tier %>"><%= t.tier %></span>
+            <span class="kind-chip"><%= t.kind === 'website' ? 'Invitation Website' : t.kind === 'pdf' ? 'Printable PDF' : 'Invitation Image' %></span>
+          </div>
+          <h3><%= t.name %></h3>
+          <p class="tag"><%= t.tagline %></p>
+          <div class="tpl-foot">
+            <span class="price <%= t.price_lkr === 0 ? 'free' : '' %>"><%= formatLKR(t.price_lkr) %></span>
+            <a class="btn btn-gold" style="min-height:42px;padding:0 22px" href="/start/<%= t.id %>">Use this</a>
+          </div>
+          <% if (t.id === 'golden-seal') { %><a href="/i/demo" target="_blank" rel="noopener" style="font-family:var(--sans);font-size:.7rem;letter-spacing:.18em;text-transform:uppercase">View live demo →</a><% } %>
+        </div>
+      </div>
+      <% }) %>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="how" style="background:var(--ivory);border-top:1px solid var(--border);border-bottom:1px solid var(--border)">
+  <div class="container">
+    <div class="sec-head reveal">
+      <span class="eyebrow">Effortless</span>
+      <h2>How it works</h2>
+    </div>
+    <div class="steps">
+      <div class="step reveal"><div class="n">1</div><h4>Fill in your details</h4><p>Names, date, venue, your story — our builder guides you through it.</p></div>
+      <div class="step reveal"><div class="n">2</div><h4>Preview instantly</h4><p>See your real invitation come alive before paying a rupee.</p></div>
+      <div class="step reveal"><div class="n">3</div><h4>Pay securely</h4><p>Bank transfer or PayHere. Every order gets an official receipt.</p></div>
+      <div class="step reveal"><div class="n">4</div><h4>Share the link</h4><p>Your invitation goes live — send it on WhatsApp and watch the RSVPs arrive.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="privacy reveal">
+      <div class="ic"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#C8A24B" stroke-width="1.4"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></div>
+      <div>
+        <h3>Private by design</h3>
+        <p>Your wedding is yours. Invitations are hidden from search engines, and <b>all content, photos and personal data are automatically and permanently deleted 3 days after your wedding day</b>. Nothing lingers online.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" style="padding-top:0">
+  <div class="container">
+    <div class="sec-head reveal">
+      <span class="eyebrow">Questions</span>
+      <h2>Frequently asked</h2>
+    </div>
+    <div class="faq reveal">
+      <details><summary>How do guests RSVP?</summary><p>Website invitations include an RSVP form that opens WhatsApp with a pre-filled message to you — no accounts, no apps, exactly how Sri Lanka communicates.</p></details>
+      <details><summary>Can I preview before I pay?</summary><p>Yes — the full invitation is generated instantly with a preview watermark. Pay only when you love it.</p></details>
+      <details><summary>How do I pay?</summary><p>Bank transfer (verified within hours) or PayHere online payment for instant activation. Every order receives an order number and an official PDF receipt.</p></details>
+      <details><summary>How long does my invitation stay live?</summary><p>Until 3 days after your wedding date, then everything is automatically and permanently deleted. Need longer? We can extend it — just ask.</p></details>
+      <details><summary>Can you customise it further?</summary><p>The Poruwe Royale tier includes a designer session — bespoke colours, photo curation and priority WhatsApp support.</p></details>
+    </div>
+  </div>
+</section>
+
+<footer class="pfooter">
+  <div class="wordmark">Poruwe</div>
+  <p>Wedding invitations, sealed with love · Sri Lanka</p>
+</footer>
+
+<script>
+  // gold dust particles
+  (function(){
+    const c = document.getElementById('gold-dust');
+    if (!c) return;
+    const x = c.getContext('2d');
+    let W, H, ps = [];
+    const size = () => { W = c.width = c.offsetWidth; H = c.height = c.offsetHeight; };
+    size(); addEventListener('resize', size);
+    for (let i = 0; i < 55; i++) ps.push({ x: Math.random()*W, y: Math.random()*H, r: Math.random()*1.6+.4, a: Math.random()*.4+.1, vx:(Math.random()-.5)*.25, vy:(Math.random()-.5)*.25 });
+    (function loop(){
+      x.clearRect(0,0,W,H);
+      ps.forEach(p => {
+        x.beginPath(); x.arc(p.x,p.y,p.r,0,7); x.fillStyle = `rgba(200,162,75,${p.a})`; x.fill();
+        p.x+=p.vx; p.y+=p.vy;
+        if (p.x<0||p.x>W) p.vx*=-1;
+        if (p.y<0||p.y>H) p.vy*=-1;
+      });
+      requestAnimationFrame(loop);
+    })();
+  })();
+  // reveals
+  const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } }), { threshold:.12 });
+  document.querySelectorAll('.reveal:not(.in)').forEach(el => io.observe(el));
+</script>
+</body>
+</html>

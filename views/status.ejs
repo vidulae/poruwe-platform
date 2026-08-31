@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Order <%= order.order_no %> · Poruwe</title>
+<meta name="robots" content="noindex" />
+<% if (['draft','pending_payment','pending_verification'].includes(order.status)) { %><meta http-equiv="refresh" content="25" /><% } %>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Italiana&family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="/public/poruwe.css" />
+<style>
+  .swrap{max-width:680px;margin:0 auto;padding:50px 20px 90px;text-align:center}
+  .badge{display:inline-block;font-family:var(--sans);font-size:.66rem;font-weight:600;letter-spacing:.24em;text-transform:uppercase;padding:8px 18px;border-radius:24px;margin-bottom:20px}
+  .b-draft{background:#eee7d8;color:#8a6a25}
+  .b-pending{background:#efe7d8;color:#8a6a25}
+  .b-active{background:var(--gold);color:var(--forest)}
+  .b-bad{background:#e8dede;color:#7a3b3b}
+  .swrap h1{font-size:2.4rem;margin-bottom:12px}
+  .swrap .sub{margin-bottom:34px}
+  .flow{display:flex;justify-content:center;gap:0;margin-bottom:40px}
+  .fstep{flex:1;max-width:150px;position:relative;font-family:var(--sans);font-size:.6rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);padding-top:26px}
+  .fstep::before{content:'';position:absolute;top:8px;left:50%;transform:translateX(-50%);width:12px;height:12px;border-radius:50%;background:var(--cream);border:2px solid rgba(200,162,75,.4)}
+  .fstep::after{content:'';position:absolute;top:13px;left:calc(50% + 10px);right:calc(-50% + 10px);height:2px;background:rgba(200,162,75,.25)}
+  .fstep:last-child::after{display:none}
+  .fstep.done::before{background:var(--gold);border-color:var(--gold)}
+  .fstep.done{color:var(--gold-deep);font-weight:600}
+  .linkbox{background:var(--forest);color:var(--cream);border-radius:10px;padding:34px 26px;margin-bottom:26px}
+  .linkbox .lu{font-family:var(--sans);font-size:1.02rem;color:var(--gold-light);word-break:break-all;margin:12px 0 20px;display:block}
+  .actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:14px}
+  .note{font-size:.95rem;font-style:italic}
+  .panelbox{background:var(--ivory);border:1px solid var(--border);border-radius:10px;padding:30px;margin-bottom:26px;text-align:left}
+  .panelbox h3{font-size:1.4rem;margin-bottom:10px}
+</style>
+</head>
+<body>
+<nav class="pnav"><a class="wordmark" href="/">Poruwe</a><div class="links"><a href="/receipt/<%= order.token %>">Receipt</a></div></nav>
+<div class="swrap">
+  <%
+    const st = order.status;
+    const badge = st === 'active' ? ['b-active','Live'] : st === 'draft' ? ['b-draft','Draft'] :
+      st === 'pending_payment' ? ['b-pending','Awaiting payment'] : st === 'pending_verification' ? ['b-pending','Verifying payment'] :
+      st === 'rejected' ? ['b-bad','Needs attention'] : ['b-bad', st.charAt(0).toUpperCase()+st.slice(1)];
+    const flowIdx = st === 'draft' ? 0 : (st === 'pending_payment' || st === 'pending_verification') ? 1 : st === 'active' ? 3 : 2;
+  %>
+  <span class="badge <%= badge[0] %>"><%= badge[1] %></span>
+  <h1>Order <%= order.order_no %></h1>
+  <p class="sub"><%= tpl.name %> · <%= formatLKR(tpl.price_lkr) %></p>
+
+  <div class="flow">
+    <div class="fstep done">Details</div>
+    <div class="fstep <%= flowIdx >= 1 ? 'done' : '' %>">Payment</div>
+    <div class="fstep <%= flowIdx >= 2 ? 'done' : '' %>">Verification</div>
+    <div class="fstep <%= flowIdx >= 3 ? 'done' : '' %>">Live</div>
+  </div>
+
+  <% if (st === 'active') { %>
+    <div class="linkbox">
+      <span class="eyebrow" style="color:var(--gold-light)">🎉 Your invitation is live</span>
+      <% if (order.kind === 'website' && liveUrl) { %>
+        <a class="lu" href="<%= liveUrl %>" target="_blank" rel="noopener"><%= liveUrl %></a>
+        <div class="actions">
+          <button class="btn btn-gold" onclick="navigator.clipboard.writeText('<%= liveUrl %>').then(()=>this.textContent='Copied ✓')">Copy link</button>
+          <a class="btn btn-line" style="border-color:var(--gold-light);color:var(--gold-light)" href="https://wa.me/?text=<%= encodeURIComponent('You are warmly invited! 💍 ' + liveUrl) %>" target="_blank" rel="noopener">Share on WhatsApp</a>
+        </div>
+      <% } else if (order.kind === 'pdf') { %>
+        <p style="margin-bottom:18px">Your printable invitation is ready.</p>
+        <div class="actions"><a class="btn btn-gold" href="/d/<%= order.token %>/invitation.pdf">Download PDF</a></div>
+      <% } else { %>
+        <p style="margin-bottom:18px">Your invitation image is ready.</p>
+        <div class="actions"><a class="btn btn-gold" href="/d/<%= order.token %>/card.png">Download image</a></div>
+      <% } %>
+    </div>
+    <p class="note">Live until 3 days after your wedding — then all data is automatically and permanently deleted.</p>
+  <% } else if (st === 'pending_verification') { %>
+    <div class="panelbox"><h3>We're verifying your payment</h3>
+      <p>This usually takes a few hours at most. This page refreshes automatically — your link appears here the moment it's approved.</p></div>
+  <% } else if (st === 'pending_payment') { %>
+    <div class="panelbox"><h3>Payment not completed yet</h3>
+      <p>It looks like the online payment wasn't finished. You can return to the builder and try again.</p></div>
+    <div class="actions"><a class="btn btn-gold" href="/b/<%= order.token %>">Back to builder</a></div>
+  <% } else if (st === 'draft') { %>
+    <div class="panelbox"><h3>Your invitation is still a draft</h3><p>Pick up where you left off — your work is saved.</p></div>
+    <div class="actions"><a class="btn btn-gold" href="/b/<%= order.token %>">Continue building</a></div>
+  <% } else if (st === 'rejected') { %>
+    <div class="panelbox"><h3>We couldn't verify this payment</h3>
+      <p><%= (order.payment && order.payment.rejectReason) || 'Please contact us and we\'ll sort it out quickly.' %></p></div>
+    <div class="actions"><a class="btn btn-gold" href="/b/<%= order.token %>">Update & resubmit</a></div>
+  <% } else { %>
+    <div class="panelbox"><h3>This invitation has concluded</h3><p>All personal data has been permanently removed, as promised.</p></div>
+  <% } %>
+
+  <div class="actions" style="margin-top:26px">
+    <a class="btn btn-ghost" href="/receipt/<%= order.token %>">View receipt</a>
+    <a class="btn btn-ghost" href="/receipt/<%= order.token %>.pdf">Receipt PDF</a>
+    <% if (support) { %><a class="btn btn-ghost" href="https://wa.me/<%= support %>" target="_blank" rel="noopener">WhatsApp support</a><% } %>
+  </div>
+</div>
+</body>
+</html>
