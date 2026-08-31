@@ -8,7 +8,7 @@ const { derive, formatLKR } = require('./lib/format');
 const { coupleSlug } = require('./lib/slugify');
 const auth = require('./lib/auth');
 const payments = require('./lib/payments');
-const { defaultStory, defaultProgram } = require('./lib/catalog');
+const { defaultStory, defaultProgram, defaultContacts } = require('./lib/catalog');
 const { buildInvitationPdf } = require('./lib/render/pdfcard');
 const { buildInvitationImage } = require('./lib/render/imagecard');
 const { buildReceiptPdf } = require('./lib/render/receipt');
@@ -159,7 +159,7 @@ app.get('/start/:templateId', asyncH(async (req, res) => {
   if (rec && rec.resetAt > now && rec.count >= 25) return res.status(429).send('Too many drafts — please try again later.');
   createLimiter.set(ip, rec && rec.resetAt > now ? { count: rec.count + 1, resetAt: rec.resetAt } : { count: 1, resetAt: now + 24 * 3600e3 });
 
-  const data = sanitizeData({ story: defaultStory(), program: defaultProgram() });
+  const data = sanitizeData({ story: defaultStory(), program: defaultProgram(), contacts: defaultContacts(), rsvp: { wa: '94770000001' } });
   const order = await store.createOrder(tpl.id, tpl.kind, data);
   await store.audit(order.id, 'created', { template: tpl.id });
   res.redirect(`/b/${order.token}`);
