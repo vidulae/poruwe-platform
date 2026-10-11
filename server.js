@@ -20,9 +20,20 @@ const STOCK = {
   hero: 'https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1950&q=80',
   venue: 'https://images.unsplash.com/photo-1571896349842-33c89424de2d?auto=format&fit=crop&w=1600&q=80',
   rsvp: 'https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?auto=format&fit=crop&w=1950&q=80',
-  // sample pages only — so template previews show the portrait sections
-  groomSample: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=900&q=80',
-  brideSample: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=900&q=80',
+  // sample pages only — neutral, faceless "common" images in the portrait slots
+  groomSample: 'https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?auto=format&fit=crop&w=900&q=80',
+  brideSample: 'https://images.unsplash.com/photo-1550005809-91ad75fb315f?auto=format&fit=crop&w=900&q=80',
+};
+
+// Generic mood imagery baked into each template's design (never personal photos)
+const MOODS = {
+  'poruwe-royale': 'https://images.unsplash.com/photo-1511795409834-ef04bbd61622?auto=format&fit=crop&w=1800&q=80',
+  'gilded-arch': 'https://images.unsplash.com/photo-1519167758481-83f550bb49b3?auto=format&fit=crop&w=1600&q=80',
+  'candlelight': 'https://images.unsplash.com/photo-1532712938310-34cb3982ef74?auto=format&fit=crop&w=1800&q=80',
+  'ceylon-heritage': 'https://images.unsplash.com/photo-1606800052052-a08af7148866?auto=format&fit=crop&w=1400&q=80',
+  'moonstone': 'https://images.unsplash.com/photo-1545232979-8bf68ee9b1af?auto=format&fit=crop&w=1800&q=80',
+  'lotus-garden': 'https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?auto=format&fit=crop&w=1600&q=80',
+  'sunset-veranda': 'https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?auto=format&fit=crop&w=1600&q=80',
 };
 
 const app = express();
@@ -145,6 +156,7 @@ async function renderWebsite(req, res, order, { preview = false, stockPortraits 
       bride: await imgUrlFor(order, 'bride', stockPortraits ? STOCK.brideSample : null),
       venue: await imgUrlFor(order, 'venue', STOCK.venue),
       hero: STOCK.hero, rsvpBg: STOCK.rsvp,
+      mood: MOODS[tpl.id] || null,
     },
     brandBase: baseUrl(req),
   });
@@ -574,6 +586,14 @@ app.put('/api/admin/orders/:id/data', asyncH(async (req, res) => {
 }));
 
 app.get('/api/admin/testimonials', asyncH(async (req, res) => res.json(await store.listTestimonials())));
+app.post('/api/admin/testimonials', asyncH(async (req, res) => {
+  const b = req.body || {};
+  const rating = Math.min(5, Math.max(1, Math.round(+b.rating || 0)));
+  const author = str(b.author, 60), text = str(b.text, 600);
+  if (!rating || !author || !text) return res.status(400).json({ error: 'incomplete' });
+  const row = await store.createTestimonial({ template_id: str(b.template_id, 40) || null, author, couple: str(b.couple, 80) || null, rating, text, visible: !!b.visible });
+  res.json(row);
+}));
 app.put('/api/admin/testimonials/:id', asyncH(async (req, res) => {
   const row = await store.setTestimonialVisible(req.params.id, (req.body || {}).visible);
   if (!row) return res.status(404).json({ error: 'not_found' });

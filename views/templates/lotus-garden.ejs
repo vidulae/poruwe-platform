@@ -36,6 +36,12 @@
     radial-gradient(90% 70% at 90% 100%, rgba(124,139,116,.2), transparent 60%),
     radial-gradient(80% 60% at 6% 92%, rgba(169,142,99,.14), transparent 55%),
     linear-gradient(180deg,#FBFAF6,#F3F2EA)}
+  .hero-bloom{position:absolute;inset:0;z-index:0}
+  .hero-bloom img{width:100%;height:100%;object-fit:cover;opacity:.32;animation:bloomzoom 16s cubic-bezier(.2,.6,.3,1) forwards}
+  @keyframes bloomzoom{from{transform:scale(1.09)}to{transform:scale(1)}}
+  .hero-bloom::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg, var(--paper) 4%, rgba(251,250,246,.45) 45%, var(--paper) 96%)}
+  .hero .hin{z-index:2}
+  .hero .hero-wash{z-index:1;mix-blend-mode:multiply}
   .sprig{position:absolute;color:var(--leaf);opacity:.5;pointer-events:none}
   .sprig.tl{top:28px;left:22px;width:clamp(90px,16vw,170px)}
   .sprig.br{bottom:24px;right:20px;width:clamp(90px,16vw,170px);transform:rotate(180deg)}
@@ -139,6 +145,7 @@
 <style>@media(max-width:640px){.pv-ribbon{top:8px;left:-58px;padding:8px 54px;font-size:9px}}</style><% } %>
 
 <header class="hero">
+  <% if (img.mood) { %><div class="hero-bloom"><img src="<%= img.mood %>" alt="" /></div><% } %>
   <div class="hero-wash"></div>
   <svg class="sprig tl" viewBox="0 0 160 160" fill="none" stroke="currentColor" stroke-width="1.1"><path d="M8 152C38 110 60 70 148 10"/><path d="M52 104c-20-4-32-16-34-34 18 2 30 14 34 34zM78 78c-4-20 2-36 16-46 6 16 0 32-16 46zM100 58c12-16 28-22 46-18-8 16-24 24-46 18z"/></svg>
   <svg class="sprig br" viewBox="0 0 160 160" fill="none" stroke="currentColor" stroke-width="1.1"><path d="M8 152C38 110 60 70 148 10"/><path d="M52 104c-20-4-32-16-34-34 18 2 30 14 34 34zM78 78c-4-20 2-36 16-46 6 16 0 32-16 46zM100 58c12-16 28-22 46-18-8 16-24 24-46 18z"/></svg>

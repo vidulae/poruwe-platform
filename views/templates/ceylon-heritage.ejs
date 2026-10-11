@@ -33,7 +33,13 @@
   .flourish{color:var(--gold);opacity:.85}
 
   /* hero panel */
-  .hero{min-height:100svh;display:flex;align-items:center;justify-content:center;padding:56px 18px}
+  .hero{min-height:100svh;display:flex;align-items:center;justify-content:center;padding:56px 18px;position:relative;overflow:hidden}
+  .hero-back{position:absolute;inset:0;z-index:0}
+  .hero-back img{width:100%;height:100%;object-fit:cover;opacity:.3;filter:sepia(.5) saturate(1.2);animation:heritagezoom 18s cubic-bezier(.2,.6,.3,1) forwards}
+  @keyframes heritagezoom{from{transform:scale(1.1)}to{transform:scale(1)}}
+  .hero-back::after{content:'';position:absolute;inset:0;background:
+    radial-gradient(80% 60% at 50% 45%, rgba(78,20,20,.68), rgba(58,15,15,.94) 85%)}
+  .hero .panel{z-index:2}
   .panel{position:relative;max-width:760px;width:100%;text-align:center;border:2px solid var(--line);padding:clamp(44px,8vw,92px) clamp(22px,6vw,70px);background:
     linear-gradient(180deg, rgba(58,15,15,.35), rgba(58,15,15,.1) 30%, rgba(58,15,15,.35))}
   .panel::before{content:'';position:absolute;inset:9px;border:1px solid rgba(201,162,39,.3);pointer-events:none}
@@ -145,6 +151,7 @@
 <style>@media(max-width:640px){.pv-ribbon{top:8px;left:-58px;padding:8px 54px;font-size:9px}}</style><% } %>
 
 <header class="hero">
+  <% if (img.mood) { %><div class="hero-back"><img src="<%= img.mood %>" alt="" /></div><% } %>
   <div class="panel rv in">
     <svg class="corner tl flourish" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M2 62V22C2 11 11 2 22 2h40"/><path d="M10 62V26C10 17 17 10 26 10h36" opacity=".55"/><circle cx="22" cy="22" r="3.4" fill="currentColor" stroke="none"/><path d="M22 13c3 3.4 3 8-0 11-3-3-3-7.6 0-11z" fill="currentColor" stroke="none" opacity=".8"/></svg>
     <svg class="corner tr flourish" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M2 62V22C2 11 11 2 22 2h40"/><path d="M10 62V26C10 17 17 10 26 10h36" opacity=".55"/><circle cx="22" cy="22" r="3.4" fill="currentColor" stroke="none"/><path d="M22 13c3 3.4 3 8-0 11-3-3-3-7.6 0-11z" fill="currentColor" stroke="none" opacity=".8"/></svg>

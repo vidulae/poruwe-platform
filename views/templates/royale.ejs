@@ -27,8 +27,12 @@
   .wrap{max-width:1060px;margin:0 auto;padding:0 26px}
 
   /* frontispiece */
-  .front{min-height:100svh;position:relative;display:flex;align-items:center;justify-content:center;text-align:center;padding:90px 20px}
-  .frame{position:absolute;inset:16px;border:1px solid var(--hair);pointer-events:none}
+  .front{min-height:100svh;position:relative;display:flex;align-items:center;justify-content:center;text-align:center;padding:90px 20px;overflow:hidden}
+  .front-bg{position:absolute;inset:0;z-index:0}
+  .front-bg img{width:100%;height:100%;object-fit:cover;animation:kenburns 14s cubic-bezier(.2,.6,.3,1) forwards;filter:saturate(.8)}
+  @keyframes kenburns{from{transform:scale(1.1)}to{transform:scale(1)}}
+  .front-bg::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg, rgba(247,244,236,.92), rgba(247,244,236,.82) 40%, rgba(247,244,236,.94))}
+  .frame{position:absolute;inset:16px;border:1px solid var(--hair);pointer-events:none;z-index:2}
   .frame::after{content:'';position:absolute;inset:8px;border:1px solid var(--hair-2)}
   .front-in{position:relative;max-width:900px}
   .front .micro{display:block;margin-bottom:34px;opacity:0;animation:fadeIn 1.4s .3s forwards}
@@ -156,8 +160,9 @@
 <style>@media(max-width:640px){.pv-ribbon{top:8px;left:-58px;padding:8px 54px;font-size:9px}}</style><% } %>
 
 <header class="front">
+  <% if (img.mood) { %><div class="front-bg"><img src="<%= img.mood %>" alt="" /></div><% } %>
   <div class="frame"></div>
-  <div class="front-in">
+  <div class="front-in" style="position:relative;z-index:3">
     <span class="micro">Together with their families</span>
     <h1 class="fname"><%= s.groom %></h1>
     <div class="famp">&amp;</div>
