@@ -8,7 +8,7 @@ const { derive, formatLKR } = require('./lib/format');
 const { coupleSlug } = require('./lib/slugify');
 const auth = require('./lib/auth');
 const payments = require('./lib/payments');
-const { defaultStory, defaultProgram, defaultContacts, sampleData } = require('./lib/catalog');
+const { TEMPLATES, defaultStory, defaultProgram, defaultContacts, sampleData } = require('./lib/catalog');
 const { buildInvitationPdf } = require('./lib/render/pdfcard');
 const { buildInvitationImage } = require('./lib/render/imagecard');
 const { buildReceiptPdf } = require('./lib/render/receipt');
@@ -158,6 +158,9 @@ app.get('/healthz', (req, res) => res.json({ ok: true }));
 
 app.get('/', asyncH(async (req, res) => {
   const templates = await store.listTemplates(true);
+  // card art (thumb) is design data that lives in the catalog, not the DB
+  const art = Object.fromEntries(TEMPLATES.map((t) => [t.id, t.thumb]));
+  for (const t of templates) t.thumb = art[t.id];
   res.render('landing', { templates, formatLKR });
 }));
 
@@ -200,12 +203,13 @@ app.get('/p/:token', asyncH(async (req, res) => {
     }
   }
   if (order.kind === 'website') return renderWebsite(req, res, order, { preview });
+  const ptpl = await store.getTemplate(order.template_id);
   if (order.kind === 'pdf') {
-    const buf = await buildInvitationPdf(derive(order.data), { preview });
+    const buf = await buildInvitationPdf(derive(order.data), { preview, template: ptpl });
     res.type('application/pdf').setHeader('Content-Disposition', 'inline; filename="invitation-preview.pdf"');
     return res.send(buf);
   }
-  const buf = await buildInvitationImage(derive(order.data), await cardPhotoDataUri(order), { preview });
+  const buf = await buildInvitationImage(derive(order.data), await cardPhotoDataUri(order), { preview, template: ptpl });
   res.type('image/png');
   return res.send(buf);
 }));
@@ -237,7 +241,7 @@ app.get('/sample/:templateId', asyncH(async (req, res) => {
     return res.send(buf);
   }
   if (tpl.kind === 'image') {
-    const buf = await buildInvitationImage(derive(order.data), { preview: true, template: tpl });
+    const buf = await buildInvitationImage(derive(order.data), null, { preview: true, template: tpl });
     res.type('image/png');
     return res.send(buf);
   }
@@ -279,7 +283,7 @@ app.get('/d/:token/invitation.pdf', asyncH(async (req, res) => {
   const order = await store.orderByToken(req.params.token);
   if (!order || order.kind !== 'pdf') return res.status(404).render('notfound');
   if (order.status !== 'active' || orderExpired(order)) return res.status(410).render('gone');
-  const buf = await buildInvitationPdf(derive(order.data), { preview: false });
+  const buf = await buildInvitationPdf(derive(order.data), { preview: false, template: await store.getTemplate(order.template_id) });
   res.type('application/pdf').setHeader('Content-Disposition', 'attachment; filename="wedding-invitation.pdf"');
   res.send(buf);
 }));
@@ -288,7 +292,7 @@ app.get('/d/:token/card.png', asyncH(async (req, res) => {
   const order = await store.orderByToken(req.params.token);
   if (!order || order.kind !== 'image') return res.status(404).render('notfound');
   if (order.status !== 'active' || orderExpired(order)) return res.status(410).render('gone');
-  const buf = await buildInvitationImage(derive(order.data), await cardPhotoDataUri(order), { preview: false });
+  const buf = await buildInvitationImage(derive(order.data), await cardPhotoDataUri(order), { preview: false, template: await store.getTemplate(order.template_id) });
   res.type('image/png').setHeader('Content-Disposition', 'attachment; filename="wedding-invitation.png"');
   res.send(buf);
 }));

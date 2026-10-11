@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="icon" href="/public/icons/favicon.svg" type="image/svg+xml" />
+<link rel="icon" href="/public/icons/favicon-32.png" sizes="32x32" type="image/png" />
+<link rel="apple-touch-icon" href="/public/icons/apple-touch-icon.png" />
+<title><%= s.coupleTitle %> · <%= s.dateShort %></title>
+<meta name="robots" content="noindex" />
+<meta name="description" content="<%= s.coupleTitle %> — <%= s.dateLong %> · <%= s.venueName %>" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Italiana&family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --paper:#F7F4EC; --panel:#FDFBF4; --ink:#191C18; --stone:#6E6A5E;
+    --champagne:#A8894E; --champagne-2:#C9B280; --deep:#1E241E; --deep-ink:#EDE8DA;
+    --hair:rgba(168,137,78,.42); --hair-2:rgba(25,28,24,.14);
+    --display:'Italiana',serif; --serif:'Cormorant Garamond',Georgia,serif; --sans:'Montserrat',sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{background:var(--paper);color:var(--ink);font-family:var(--serif);font-size:1.12rem;line-height:1.8;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+  img{max-width:100%;display:block}
+  .micro{font-family:var(--sans);font-size:.66rem;font-weight:600;letter-spacing:.42em;text-transform:uppercase;color:var(--champagne)}
+  .wrap{max-width:1060px;margin:0 auto;padding:0 26px}
+
+  /* frontispiece */
+  .front{min-height:100svh;position:relative;display:flex;align-items:center;justify-content:center;text-align:center;padding:90px 20px}
+  .frame{position:absolute;inset:16px;border:1px solid var(--hair);pointer-events:none}
+  .frame::after{content:'';position:absolute;inset:8px;border:1px solid var(--hair-2)}
+  .front-in{position:relative;max-width:900px}
+  .front .micro{display:block;margin-bottom:34px;opacity:0;animation:fadeIn 1.4s .3s forwards}
+  .fname{font-family:var(--display);font-weight:400;font-size:clamp(3.3rem,12vw,7.6rem);line-height:1.04;letter-spacing:.06em;text-transform:uppercase;opacity:0;transform:translateY(26px);animation:riseIn 1.6s cubic-bezier(.16,1,.3,1) forwards}
+  .fname.b{animation-delay:.45s}
+  .famp{font-family:var(--serif);font-style:italic;font-size:clamp(1.6rem,4.5vw,2.6rem);color:var(--champagne);margin:10px 0;opacity:0;animation:fadeIn 1.4s .8s forwards}
+  .fdate{margin-top:40px;display:inline-flex;align-items:center;gap:22px;opacity:0;animation:fadeIn 1.6s 1.15s forwards}
+  .fdate .ln{width:64px;height:1px;background:var(--hair)}
+  .fdate span{font-family:var(--sans);font-size:.78rem;letter-spacing:.34em;color:var(--stone)}
+  .fcue{position:absolute;bottom:34px;left:50%;transform:translateX(-50%);opacity:0;animation:fadeIn 1.6s 1.7s forwards}
+  .fcue i{display:block;width:1px;height:52px;background:linear-gradient(var(--champagne),transparent);margin:0 auto;animation:cue 2.4s ease-in-out infinite}
+  @keyframes cue{0%,100%{transform:scaleY(.4);transform-origin:top}50%{transform:scaleY(1);transform-origin:top}}
+  @keyframes riseIn{to{opacity:1;transform:none}}
+  @keyframes fadeIn{to{opacity:1}}
+
+  /* reveal */
+  .rv{opacity:0;transform:translateY(34px);transition:opacity 1.2s cubic-bezier(.16,1,.3,1),transform 1.2s cubic-bezier(.16,1,.3,1)}
+  .rv.in{opacity:1;transform:none}
+
+  /* invitation note */
+  .note{padding:130px 0 110px;text-align:center}
+  .note p.lead{max-width:34ch;margin:26px auto 0;font-size:clamp(1.5rem,3.4vw,2.1rem);font-weight:300;line-height:1.55}
+  .note p.lead em{font-style:italic;color:var(--champagne)}
+
+  /* countdown */
+  .count{display:flex;justify-content:center;gap:0;margin:66px auto 0;max-width:640px}
+  .cunit{flex:1;text-align:center;position:relative;padding:4px 6px}
+  .cunit + .cunit::before{content:'';position:absolute;left:0;top:12%;bottom:12%;width:1px;background:var(--hair-2)}
+  .cnum{font-family:var(--display);font-size:clamp(2.1rem,6vw,3.4rem);line-height:1;color:var(--ink);font-variant-numeric:tabular-nums}
+  .clab{font-family:var(--sans);font-size:.58rem;font-weight:600;letter-spacing:.3em;text-transform:uppercase;color:var(--stone);margin-top:10px}
+
+  /* story editorial */
+  .story{padding:110px 0 40px}
+  .shead{text-align:center;margin-bottom:84px}
+  .shead h2{font-family:var(--display);font-size:clamp(2.1rem,6vw,3.4rem);font-weight:400;letter-spacing:.08em;text-transform:uppercase;margin-top:16px}
+  .chapter{display:grid;grid-template-columns:150px 1fr;gap:34px;align-items:start;max-width:820px;margin:0 auto 86px}
+  .chapter:nth-child(even of .chapter){grid-template-columns:1fr 150px}
+  .chapter:nth-child(even of .chapter) .cnumeral{order:2;text-align:left}
+  .cnumeral{font-family:var(--display);font-size:clamp(3.6rem,9vw,5.6rem);line-height:.9;color:transparent;-webkit-text-stroke:1px var(--champagne-2);text-align:right;padding-top:8px}
+  .cbody .micro{letter-spacing:.3em;color:var(--stone)}
+  .cbody h3{font-family:var(--serif);font-style:italic;font-weight:400;font-size:clamp(1.7rem,4.4vw,2.4rem);color:var(--ink);margin:10px 0 14px}
+  .cbody p{color:#3F4038;max-width:56ch}
+  .cbody::after{content:'';display:block;width:52px;height:1px;background:var(--hair);margin-top:26px}
+
+  /* quote band */
+  .band{background:var(--deep);color:var(--deep-ink);text-align:center;padding:120px 26px;position:relative;overflow:hidden}
+  .band::before,.band::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:1px;height:44px;background:linear-gradient(var(--champagne-2),transparent)}
+  .band::before{top:0}
+  .band::after{bottom:0;background:linear-gradient(transparent,var(--champagne-2))}
+  .band q{display:block;quotes:none;font-family:var(--serif);font-style:italic;font-weight:300;font-size:clamp(1.7rem,4.6vw,2.8rem);line-height:1.5;max-width:30ch;margin:0 auto}
+  .band .micro{display:block;margin-top:30px;color:var(--champagne-2)}
+
+  /* programme */
+  .prog{padding:130px 0}
+  .plist{max-width:720px;margin:70px auto 0}
+  .prow{padding:26px 4px;border-bottom:1px solid var(--hair-2)}
+  .prow:first-child{border-top:1px solid var(--hair-2)}
+  .prow .line1{display:flex;align-items:baseline;gap:16px}
+  .ptime{font-family:var(--sans);font-size:.72rem;font-weight:600;letter-spacing:.22em;color:var(--champagne);white-space:nowrap}
+  .pdots{flex:1;border-bottom:1px dotted var(--hair);transform:translateY(-4px)}
+  .ptitle{font-family:var(--serif);font-size:1.5rem;font-weight:500}
+  .prow p{color:var(--stone);font-size:1.02rem;margin-top:8px}
+
+  /* venue */
+  .venue-fig{position:relative}
+  .venue-fig img{width:100%;height:clamp(300px,56vh,560px);object-fit:cover;filter:saturate(.92)}
+  .vcap{background:var(--panel);border:1px solid var(--hair);max-width:720px;margin:-74px auto 0;position:relative;padding:clamp(30px,5vw,50px);text-align:center;box-shadow:0 30px 70px -40px rgba(25,28,24,.35)}
+  .vcap h3{font-family:var(--display);font-size:clamp(1.9rem,5vw,2.9rem);font-weight:400;letter-spacing:.05em;margin:14px 0 8px}
+  .vcap .addr{color:var(--stone);max-width:44ch;margin:0 auto}
+  .vbtns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-top:30px}
+  .btn{display:inline-flex;align-items:center;justify-content:center;min-height:50px;padding:12px 30px;border:1px solid var(--champagne);color:var(--champagne);font-family:var(--sans);font-size:.72rem;font-weight:600;letter-spacing:.24em;text-transform:uppercase;text-decoration:none;background:none;cursor:pointer;transition:.35s}
+  .btn:hover{background:var(--champagne);color:var(--paper)}
+  .btn.solid{background:var(--champagne);color:var(--paper)}
+  .btn.solid:hover{background:var(--ink);border-color:var(--ink)}
+
+  /* portraits */
+  .duo{display:grid;grid-template-columns:1fr 1fr;gap:26px;max-width:760px;margin:90px auto 0}
+  .duo figure{text-align:center}
+  .duo img{width:100%;aspect-ratio:1;object-fit:cover;filter:grayscale(.12)}
+  .duo figcaption{margin-top:16px;font-family:var(--serif);font-style:italic;font-size:1.3rem}
+  .duo .role{display:block;font-family:var(--sans);font-size:.6rem;letter-spacing:.3em;text-transform:uppercase;color:var(--stone);font-style:normal;margin-top:4px}
+
+  /* rsvp + contacts */
+  .rsvp{padding:130px 0 120px}
+  .rgrid{display:grid;grid-template-columns:1fr 1.15fr;gap:60px;align-items:start;margin-top:66px}
+  .cwho{border-top:1px solid var(--hair-2);padding:22px 2px;display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;align-items:center}
+  .cwho:last-child{border-bottom:1px solid var(--hair-2)}
+  .cwho .nm{font-family:var(--serif);font-size:1.35rem}
+  .cwho .rl{font-family:var(--sans);font-size:.6rem;letter-spacing:.26em;text-transform:uppercase;color:var(--stone);display:block;margin-top:2px}
+  .cwho .ways{display:flex;gap:10px}
+  .cwho a{width:44px;height:44px;border:1px solid var(--hair);display:flex;align-items:center;justify-content:center;color:var(--champagne);transition:.3s}
+  .cwho a:hover{background:var(--champagne);color:var(--paper)}
+  .rform{border:1px solid var(--hair);background:var(--panel);padding:clamp(26px,4.6vw,44px)}
+  .rform .micro{display:block;margin-bottom:18px}
+  .f{margin-bottom:18px}
+  .f label{display:block;font-family:var(--sans);font-size:.62rem;font-weight:600;letter-spacing:.24em;text-transform:uppercase;color:var(--stone);margin-bottom:8px}
+  .f input,.f select,.f textarea{width:100%;border:1px solid var(--hair-2);background:#fff;padding:13px 14px;font-family:var(--serif);font-size:1.05rem;color:var(--ink);outline:none;transition:.3s;border-radius:0;-webkit-appearance:none}
+  .f input:focus,.f select:focus,.f textarea:focus{border-color:var(--champagne)}
+  .f textarea{min-height:90px;resize:vertical}
+  .f2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .rnote{font-size:.95rem;color:var(--stone);font-style:italic;margin-top:14px}
+
+  footer{background:var(--deep);color:var(--deep-ink);text-align:center;padding:84px 26px 60px}
+  footer .fmono{font-family:var(--display);font-size:2rem;letter-spacing:.2em;color:var(--champagne-2)}
+  footer .fnames{font-family:var(--serif);font-style:italic;font-size:1.25rem;margin:14px 0 6px}
+  footer .fdate2{font-family:var(--sans);font-size:.64rem;letter-spacing:.3em;text-transform:uppercase;color:rgba(237,232,218,.55)}
+  footer .brand{margin-top:40px;font-family:var(--sans);font-size:.56rem;letter-spacing:.34em;text-transform:uppercase;color:rgba(237,232,218,.4)}
+  footer .brand a{color:var(--champagne-2);text-decoration:none}
+
+  @media(max-width:720px){
+    .chapter,.chapter:nth-child(even of .chapter){grid-template-columns:1fr;gap:10px}
+    .cnumeral,.chapter:nth-child(even of .chapter) .cnumeral{text-align:left;order:0}
+    .rgrid{grid-template-columns:1fr;gap:44px}
+    .duo{grid-template-columns:1fr 1fr;gap:14px}
+    .f2{grid-template-columns:1fr}
+    .vcap{margin:-44px 16px 0}
+    .note{padding:96px 0 80px}
+    .story,.prog,.rsvp{padding:96px 0}
+  }
+</style>
+<style><%- themeCss %></style>
+</head>
+<body class="theme-<%= t.id %>">
+<% if (preview) { %><div class="pv-ribbon" style="position:fixed;top:18px;left:-52px;z-index:99999;transform:rotate(-35deg);background:#A8894E;color:#F7F4EC;font:600 11px/1 Montserrat,Arial,sans-serif;letter-spacing:.22em;padding:11px 58px;box-shadow:0 4px 16px rgba(0,0,0,.3);pointer-events:none">PREVIEW</div>
+<style>@media(max-width:640px){.pv-ribbon{top:8px;left:-58px;padding:8px 54px;font-size:9px}}</style><% } %>
+
+<header class="front">
+  <div class="frame"></div>
+  <div class="front-in">
+    <span class="micro">Together with their families</span>
+    <h1 class="fname"><%= s.groom %></h1>
+    <div class="famp">&amp;</div>
+    <h1 class="fname b"><%= s.bride %></h1>
+    <div class="fdate"><span class="ln"></span><span><%= s.dDots %></span><span class="ln"></span></div>
+  </div>
+  <div class="fcue"><i></i></div>
+</header>
+
+<section class="note wrap rv">
+  <span class="micro">An Invitation</span>
+  <p class="lead">request the honour of your presence at the celebration of their marriage — <em><%= s.dateLong %></em>, at <%= s.venueName %>.</p>
+  <div class="count" id="count" data-when="<%= s.countdownISO %>">
+    <div class="cunit"><div class="cnum" id="cd-d">—</div><div class="clab">Days</div></div>
+    <div class="cunit"><div class="cnum" id="cd-h">—</div><div class="clab">Hours</div></div>
+    <div class="cunit"><div class="cnum" id="cd-m">—</div><div class="clab">Minutes</div></div>
+    <div class="cunit"><div class="cnum" id="cd-s">—</div><div class="clab">Seconds</div></div>
+  </div>
+</section>
+
+<% if ((d.story || []).length) { %>
+<section class="story wrap">
+  <div class="shead rv"><span class="micro">Our Story</span><h2>Chapters of Us</h2></div>
+  <% d.story.forEach(function(it, i){ %>
+  <article class="chapter rv">
+    <div class="cnumeral"><%= String(i + 1).padStart(2, '0') %></div>
+    <div class="cbody">
+      <% if (it.label) { %><span class="micro"><%= it.label %></span><% } %>
+      <h3><%= it.title %></h3>
+      <p><%= it.text %></p>
+    </div>
+  </article>
+  <% }) %>
+</section>
+<% } %>
+
+<% if (img.groom || img.bride) { %>
+<section class="wrap rv">
+  <div class="duo">
+    <% if (img.groom) { %><figure><img src="<%= img.groom %>" alt="<%= s.groom %>" loading="lazy" /><figcaption><%= s.groom %><span class="role">The Groom</span></figcaption></figure><% } %>
+    <% if (img.bride) { %><figure><img src="<%= img.bride %>" alt="<%= s.bride %>" loading="lazy" /><figcaption><%= s.bride %><span class="role">The Bride</span></figcaption></figure><% } %>
+  </div>
+</section>
+<% } %>
+
+<section class="band rv">
+  <q>Two lives, one story — and every page from here written together.</q>
+  <span class="micro"><%= s.gi %> &amp; <%= s.bi %> · <%= s.year %></span>
+</section>
+
+<% if ((d.program || []).length) { %>
+<section class="prog wrap">
+  <div class="shead rv"><span class="micro">The Day</span><h2>Order of Celebration</h2></div>
+  <div class="plist">
+    <% d.program.forEach(function(it){ %>
+    <div class="prow rv">
+      <div class="line1"><span class="ptime"><%= it.time %></span><span class="pdots"></span><span class="ptitle"><%= it.title %></span></div>
+      <% if (it.text) { %><p><%= it.text %></p><% } %>
+    </div>
+    <% }) %>
+  </div>
+</section>
+<% } %>
+
+<section id="venue">
+  <figure class="venue-fig rv"><img src="<%= img.venue %>" alt="<%= s.venueName %>" loading="lazy" /></figure>
+  <div class="vcap rv">
+    <span class="micro">The Venue</span>
+    <h3><%= s.venueName %></h3>
+    <% if (s.venueAddress) { %><p class="addr"><%= s.venueAddress %></p><% } %>
+    <p class="addr" style="margin-top:10px"><i>Ceremony at <%= s.timeDisplay %> · kindly arrive by <%= s.arriveDisplay %></i></p>
+    <div class="vbtns">
+      <a class="btn solid" href="https://www.google.com/maps/search/?api=1&query=<%= encodeURIComponent(s.mapQuery) %>" target="_blank" rel="noopener">Directions</a>
+      <% if (s.venueWebsite) { %><a class="btn" href="<%= s.venueWebsite %>" target="_blank" rel="noopener">Venue Website</a><% } %>
+    </div>
+  </div>
+</section>
+
+<section class="rsvp wrap" id="rsvp">
+  <div class="shead rv"><span class="micro">Kindly Reply<% if (s.rsvpByDisplay) { %> by <%= s.rsvpByDisplay %><% } %></span><h2>Will You Join Us</h2></div>
+  <div class="rgrid">
+    <div class="rv">
+      <% (d.contacts || []).forEach(function(c){ if (!c.name && !c.phone) return; %>
+      <div class="cwho">
+        <div><span class="nm"><%= c.name %></span><span class="rl"><%= c.role %></span></div>
+        <div class="ways">
+          <% if (c.wa) { %><a href="https://wa.me/<%= String(c.wa).replace(/\D/g,'') %>" target="_blank" rel="noopener" aria-label="WhatsApp"><svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2c-1.5 0-3-.4-4.3-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.6-6.1c-.3-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1-.2.3-.6.8-.8 1-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4 0-.6.1-.8l.4-.5c.1-.2.2-.3.3-.5v-.5c0-.1-.6-1.4-.8-1.9-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.5.1-.7.3-.2.3-.9.9-.9 2.2s.9 2.5 1 2.7a11 11 0 0 0 4.2 3.7c.6.3 1 .4 1.4.6.6.2 1.1.2 1.5.1.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.1-1.2l-.5-.3z"/></svg></a><% } %>
+          <% if (c.phone) { %><a href="tel:<%= c.phone.replace(/\s/g,'') %>" aria-label="Call"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 2 .7 2.9a2 2 0 0 1-.4 2.1L8 10a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.9.6 2.9.7a2 2 0 0 1 1.7 2z"/></svg></a><% } %>
+        </div>
+      </div>
+      <% }) %>
+      <p class="rnote">Your reply opens in WhatsApp — one tap, already written for you.</p>
+    </div>
+    <form class="rform rv" id="rsvpForm">
+      <span class="micro">RSVP</span>
+      <div class="f"><label>Your name</label><input id="rName" required placeholder="Your full name" /></div>
+      <div class="f2">
+        <div class="f"><label>Attending</label><select id="rGo"><option>Joyfully accepts</option><option>Regretfully declines</option></select></div>
+        <div class="f"><label>Guests</label><select id="rNum"><option>1</option><option>2</option><option>3</option><option>4</option><option>5+</option></select></div>
+      </div>
+      <div class="f"><label>A note for the couple (optional)</label><textarea id="rMsg" placeholder="Wishes, dietary notes, anything at all…"></textarea></div>
+      <button class="btn solid" style="width:100%" type="submit">Send via WhatsApp</button>
+    </form>
+  </div>
+</section>
+
+<footer>
+  <div class="fmono"><%= s.gi %>·<%= s.bi %></div>
+  <div class="fnames"><%= s.coupleTitle %></div>
+  <div class="fdate2"><%= s.dDots %> · <%= s.venueName %></div>
+  <div class="brand">Crafted with <a href="<%= brandBase %>" target="_blank" rel="noopener">Poruwe</a></div>
+</footer>
+
+<script>
+(function(){
+  'use strict';
+  var io = new IntersectionObserver(function(es){ es.forEach(function(e){ if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }); }, { threshold: .14 });
+  document.querySelectorAll('.rv').forEach(function(el){ io.observe(el); });
+
+  var when = new Date(document.getElementById('count').dataset.when || 0).getTime();
+  function tick(){
+    var t = Math.max(0, when - Date.now());
+    var d = Math.floor(t / 864e5), h = Math.floor(t % 864e5 / 36e5), m = Math.floor(t % 36e5 / 6e4), s = Math.floor(t % 6e4 / 1e3);
+    cd('cd-d', d); cd('cd-h', h); cd('cd-m', m); cd('cd-s', s);
+  }
+  function cd(id, v){ document.getElementById(id).textContent = String(v).padStart(2, '0'); }
+  if (when) { tick(); setInterval(tick, 1000); }
+
+  document.getElementById('rsvpForm').addEventListener('submit', function(ev){
+    ev.preventDefault();
+    <% if (preview) { %>
+    alert('This is a preview — the RSVP form starts working the moment the invitation is published.');
+    return;
+    <% } else { %>
+    var name = document.getElementById('rName').value.trim();
+    if (!name) return;
+    var msg = 'RSVP — <%= s.coupleTitle %> (<%= s.dateShort %>)\n'
+      + 'Name: ' + name + '\n'
+      + 'Attending: ' + document.getElementById('rGo').value + '\n'
+      + 'Guests: ' + document.getElementById('rNum').value
+      + (document.getElementById('rMsg').value.trim() ? '\nNote: ' + document.getElementById('rMsg').value.trim() : '');
+    window.open('https://wa.me/<%= s.rsvpWa %>?text=' + encodeURIComponent(msg), '_blank');
+    <% } %>
+  });
+})();
+</script>
+</body>
+</html>

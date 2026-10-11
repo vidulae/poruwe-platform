@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="icon" href="/public/icons/favicon.svg" type="image/svg+xml" />
+<link rel="icon" href="/public/icons/favicon-32.png" sizes="32x32" type="image/png" />
+<link rel="apple-touch-icon" href="/public/icons/apple-touch-icon.png" />
+<title><%= s.coupleTitle %> · <%= s.dateShort %></title>
+<meta name="robots" content="noindex" />
+<meta name="description" content="<%= s.coupleTitle %> — <%= s.dateLong %> · <%= s.venueName %>" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Italiana&family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --paper:#FBFAF6; --card:#FFFFFF; --ink:#44503F; --soft:#7A826F;
+    --leaf:#7C8B74; --leaf-deep:#5D6B55; --bloom:#D8A7A0; --accent:#A98E63;
+    --line:rgba(124,139,116,.3);
+    --serif:'Cormorant Garamond',Georgia,serif; --display:'Italiana',serif; --sans:'Montserrat',sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{background:var(--paper);color:var(--ink);font-family:var(--serif);font-size:1.1rem;line-height:1.85;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+  img{max-width:100%;display:block}
+  .k{font-family:var(--sans);font-size:.64rem;font-weight:600;letter-spacing:.4em;text-transform:uppercase;color:var(--leaf-deep)}
+  .wrap{max-width:960px;margin:0 auto;padding:0 24px}
+  .rv{opacity:0;transform:translateY(28px);transition:opacity 1.2s cubic-bezier(.16,1,.3,1),transform 1.2s cubic-bezier(.16,1,.3,1)}
+  .rv.in{opacity:1;transform:none}
+  .petal{color:var(--bloom)}
+
+  /* hero garden wash */
+  .hero{min-height:100svh;position:relative;display:flex;align-items:center;justify-content:center;text-align:center;padding:84px 20px;overflow:hidden}
+  .hero-wash{position:absolute;inset:0;background:
+    radial-gradient(120% 80% at 50% -8%, rgba(216,167,160,.26), transparent 58%),
+    radial-gradient(90% 70% at 90% 100%, rgba(124,139,116,.2), transparent 60%),
+    radial-gradient(80% 60% at 6% 92%, rgba(169,142,99,.14), transparent 55%),
+    linear-gradient(180deg,#FBFAF6,#F3F2EA)}
+  .sprig{position:absolute;color:var(--leaf);opacity:.5;pointer-events:none}
+  .sprig.tl{top:28px;left:22px;width:clamp(90px,16vw,170px)}
+  .sprig.br{bottom:24px;right:20px;width:clamp(90px,16vw,170px);transform:rotate(180deg)}
+  .hin{position:relative;max-width:760px}
+  .lotus{width:68px;margin:0 auto 30px;color:var(--bloom);opacity:0;animation:bloomIn 1.8s .2s cubic-bezier(.16,1,.3,1) forwards;transform:scale(.7)}
+  @keyframes bloomIn{to{opacity:1;transform:scale(1)}}
+  .hero .k{display:block;opacity:0;animation:f 1.5s .55s forwards}
+  .hname{font-family:var(--display);font-weight:400;font-size:clamp(3rem,10.5vw,6.2rem);line-height:1.08;color:var(--ink);letter-spacing:.03em;margin-top:18px;opacity:0;transform:translateY(22px);animation:r 1.6s .7s cubic-bezier(.16,1,.3,1) forwards}
+  .hamp{font-style:italic;font-size:clamp(1.5rem,4vw,2.3rem);color:var(--bloom);margin:6px 0;opacity:0;animation:f 1.4s 1.05s forwards}
+  .hmeta{margin-top:36px;display:inline-flex;flex-direction:column;gap:8px;opacity:0;animation:f 1.6s 1.4s forwards}
+  .hmeta .date{font-size:1.3rem;font-style:italic;color:var(--leaf-deep)}
+  @keyframes r{to{opacity:1;transform:none}}
+  @keyframes f{to{opacity:1}}
+
+  .sect{padding:112px 0}
+  .shead{text-align:center;margin-bottom:58px}
+  .shead h2{font-family:var(--display);font-weight:400;font-size:clamp(2rem,6vw,3.1rem);color:var(--ink);letter-spacing:.05em;margin-top:14px}
+  .shead .vine{display:flex;align-items:center;justify-content:center;gap:12px;margin-top:16px;color:var(--leaf)}
+  .shead .vine .ln{width:56px;height:1px;background:var(--line)}
+
+  /* countdown pebbles */
+  .count{display:flex;justify-content:center;gap:clamp(12px,3vw,24px);flex-wrap:wrap}
+  .peb{min-width:clamp(78px,20vw,110px);padding:24px 12px;background:var(--card);border:1px solid var(--line);border-radius:60% 40% 55% 45%/50% 55% 45% 50%;text-align:center;box-shadow:0 18px 40px -24px rgba(93,107,85,.4)}
+  .peb:nth-child(2){border-radius:45% 55% 42% 58%/55% 46% 54% 45%}
+  .peb:nth-child(3){border-radius:52% 48% 58% 42%/46% 55% 45% 54%}
+  .peb:nth-child(4){border-radius:48% 52% 45% 55%/58% 44% 56% 42%}
+  .peb b{font-family:var(--display);font-weight:400;font-size:clamp(1.7rem,5.2vw,2.5rem);color:var(--leaf-deep);font-variant-numeric:tabular-nums}
+  .peb span{display:block;font-family:var(--sans);font-size:.55rem;font-weight:600;letter-spacing:.28em;text-transform:uppercase;color:var(--soft);margin-top:5px}
+
+  /* story garden cards */
+  .beds{display:grid;grid-template-columns:1fr 1fr;gap:26px;max-width:860px;margin:0 auto}
+  .bed{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:clamp(26px,4.4vw,40px);position:relative;box-shadow:0 24px 54px -34px rgba(93,107,85,.45)}
+  .bed .leafmark{width:30px;color:var(--leaf);margin-bottom:16px}
+  .bed .k{letter-spacing:.28em;color:var(--accent)}
+  .bed h3{font-style:italic;font-weight:400;font-size:clamp(1.5rem,4vw,2rem);color:var(--ink);margin:8px 0 10px}
+  .bed p{color:var(--soft);font-size:1.02rem}
+
+  /* programme petals */
+  .pro{max-width:640px;margin:0 auto}
+  .prow{display:flex;gap:18px;padding:20px 2px;border-bottom:1px dashed var(--line);align-items:baseline}
+  .prow:first-child{border-top:1px dashed var(--line)}
+  .prow .pt{font-family:var(--sans);font-size:.72rem;font-weight:600;letter-spacing:.18em;color:var(--leaf-deep);min-width:86px;white-space:nowrap}
+  .prow .petal{font-size:.8rem;transform:translateY(-2px)}
+  .prow h4{font-weight:500;font-size:1.32rem;color:var(--ink);display:inline}
+  .prow p{font-size:.98rem;color:var(--soft);margin-top:2px}
+
+  /* venue */
+  .vwrap{max-width:820px;margin:0 auto;background:var(--card);border:1px solid var(--line);border-radius:22px;overflow:hidden;box-shadow:0 34px 80px -44px rgba(93,107,85,.5)}
+  .vwrap img{width:100%;height:clamp(240px,42vh,420px);object-fit:cover}
+  .vbody{padding:clamp(26px,5vw,46px);text-align:center}
+  .vbody h3{font-family:var(--display);font-weight:400;font-size:clamp(1.9rem,5.2vw,2.8rem);color:var(--ink)}
+  .vbody .addr{color:var(--soft);margin-top:8px;max-width:46ch;margin-left:auto;margin-right:auto}
+  .vfacts{display:flex;justify-content:center;gap:clamp(20px,5vw,46px);flex-wrap:wrap;margin:24px 0}
+  .vfacts b{display:block;font-size:1.3rem;font-weight:500;color:var(--leaf-deep)}
+  .vfacts span{font-family:var(--sans);font-size:.56rem;font-weight:600;letter-spacing:.26em;text-transform:uppercase;color:var(--soft)}
+  .btn{display:inline-flex;align-items:center;justify-content:center;min-height:50px;padding:13px 32px;border-radius:40px;border:1.5px solid var(--leaf);color:var(--leaf-deep);font-family:var(--sans);font-size:.7rem;font-weight:600;letter-spacing:.22em;text-transform:uppercase;text-decoration:none;background:none;cursor:pointer;transition:.35s}
+  .btn:hover{background:var(--leaf);color:#fff}
+  .btn.solid{background:var(--leaf);color:#fff;border-color:var(--leaf)}
+  .btn.solid:hover{background:var(--leaf-deep)}
+  .vbtns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+
+  /* rsvp */
+  .rcard{max-width:600px;margin:0 auto;background:var(--card);border:1px solid var(--line);border-radius:22px;padding:clamp(28px,5vw,48px);box-shadow:0 30px 70px -40px rgba(93,107,85,.5);position:relative;overflow:hidden}
+  .rcard::before{content:'';position:absolute;top:0;left:0;right:0;height:5px;background:linear-gradient(90deg,var(--leaf),var(--bloom),var(--accent))}
+  .f{margin-bottom:17px}
+  .f label{display:block;font-family:var(--sans);font-size:.6rem;font-weight:600;letter-spacing:.26em;text-transform:uppercase;color:var(--leaf-deep);margin-bottom:8px}
+  .f input,.f select,.f textarea{width:100%;border:1px solid var(--line);border-radius:12px;background:var(--paper);padding:13px 15px;font-family:var(--serif);font-size:1.05rem;color:var(--ink);outline:none;-webkit-appearance:none;transition:.3s}
+  .f input:focus,.f select:focus,.f textarea:focus{border-color:var(--leaf);box-shadow:0 0 0 3px rgba(124,139,116,.14)}
+  .f textarea{min-height:86px;resize:vertical}
+  .f2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .contacts{display:flex;justify-content:center;gap:clamp(22px,6vw,64px);flex-wrap:wrap;margin-top:48px;text-align:center}
+  .contacts .nm{font-size:1.3rem;color:var(--ink)}
+  .contacts .rl{display:block;font-family:var(--sans);font-size:.56rem;letter-spacing:.28em;text-transform:uppercase;color:var(--soft);margin:3px 0 10px}
+  .contacts a{display:inline-flex;width:44px;height:44px;border-radius:50%;border:1px solid var(--line);align-items:center;justify-content:center;color:var(--leaf-deep);margin:0 4px;transition:.3s;background:var(--card)}
+  .contacts a:hover{background:var(--leaf);color:#fff}
+
+  footer{text-align:center;padding:78px 20px 58px;background:linear-gradient(180deg,transparent,rgba(124,139,116,.1))}
+  footer .fm{font-family:var(--display);font-size:1.7rem;letter-spacing:.18em;color:var(--leaf-deep)}
+  footer .fn{font-style:italic;font-size:1.2rem;color:var(--soft);margin-top:8px}
+  footer .brand{margin-top:34px;font-family:var(--sans);font-size:.56rem;letter-spacing:.32em;text-transform:uppercase;color:var(--soft)}
+  footer .brand a{color:var(--accent);text-decoration:none}
+
+  @media(max-width:680px){
+    .sect{padding:86px 0}
+    .beds{grid-template-columns:1fr}
+    .f2{grid-template-columns:1fr}
+  }
+</style>
+<style><%- themeCss %></style>
+</head>
+<body class="theme-<%= t.id %>">
+<% if (preview) { %><div class="pv-ribbon" style="position:fixed;top:18px;left:-52px;z-index:99999;transform:rotate(-35deg);background:var(--leaf);color:var(--paper);font:600 11px/1 Montserrat,Arial,sans-serif;letter-spacing:.22em;padding:11px 58px;box-shadow:0 4px 16px rgba(0,0,0,.25);pointer-events:none">PREVIEW</div>
+<style>@media(max-width:640px){.pv-ribbon{top:8px;left:-58px;padding:8px 54px;font-size:9px}}</style><% } %>
+
+<header class="hero">
+  <div class="hero-wash"></div>
+  <svg class="sprig tl" viewBox="0 0 160 160" fill="none" stroke="currentColor" stroke-width="1.1"><path d="M8 152C38 110 60 70 148 10"/><path d="M52 104c-20-4-32-16-34-34 18 2 30 14 34 34zM78 78c-4-20 2-36 16-46 6 16 0 32-16 46zM100 58c12-16 28-22 46-18-8 16-24 24-46 18z"/></svg>
+  <svg class="sprig br" viewBox="0 0 160 160" fill="none" stroke="currentColor" stroke-width="1.1"><path d="M8 152C38 110 60 70 148 10"/><path d="M52 104c-20-4-32-16-34-34 18 2 30 14 34 34zM78 78c-4-20 2-36 16-46 6 16 0 32-16 46zM100 58c12-16 28-22 46-18-8 16-24 24-46 18z"/></svg>
+  <div class="hin">
+    <svg class="lotus" viewBox="0 0 68 44" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M34 42C20 36 14 24 16 8c10 4 16 12 18 24 2-12 8-20 18-24 2 16-4 28-18 34z"/><path d="M34 42C24 40 10 40 2 30c8-4 18-2 26 4M34 42c10-2 24-2 32-12-8-4-18-2-26 4" opacity=".7"/></svg>
+    <span class="k">Together with their families</span>
+    <h1 class="hname"><%= s.groom %></h1>
+    <div class="hamp">&amp;</div>
+    <h1 class="hname" style="animation-delay:.9s"><%= s.bride %></h1>
+    <div class="hmeta">
+      <span class="date"><%= s.dateLong %></span>
+      <span class="k" style="color:var(--accent)"><%= s.venueName %></span>
+    </div>
+  </div>
+</header>
+
+<section class="sect wrap">
+  <div class="shead rv"><span class="k">Counting the Days</span><h2>Until We Bloom</h2>
+    <div class="vine"><span class="ln"></span><span class="petal">✿</span><span class="ln"></span></div></div>
+  <div class="count rv" id="count" data-when="<%= s.countdownISO %>">
+    <div class="peb"><b id="cd-d">—</b><span>Days</span></div>
+    <div class="peb"><b id="cd-h">—</b><span>Hours</span></div>
+    <div class="peb"><b id="cd-m">—</b><span>Minutes</span></div>
+    <div class="peb"><b id="cd-s">—</b><span>Seconds</span></div>
+  </div>
+</section>
+
+<% if ((d.story || []).length) { %>
+<section class="sect wrap" style="padding-top:26px">
+  <div class="shead rv"><span class="k">How Love Grew</span><h2>Our Story</h2>
+    <div class="vine"><span class="ln"></span><span class="petal">✿</span><span class="ln"></span></div></div>
+  <div class="beds">
+    <% d.story.forEach(function(it){ %>
+    <article class="bed rv">
+      <svg class="leafmark" viewBox="0 0 30 30" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M4 26C8 12 16 6 27 3c-1 12-7 20-20 24z"/><path d="M4 26C10 18 16 12 24 7" opacity=".6"/></svg>
+      <% if (it.label) { %><span class="k"><%= it.label %></span><% } %>
+      <h3><%= it.title %></h3>
+      <p><%= it.text %></p>
+    </article>
+    <% }) %>
+  </div>
+</section>
+<% } %>
+
+<% if ((d.program || []).length) { %>
+<section class="sect wrap" style="padding-top:26px">
+  <div class="shead rv"><span class="k">The Celebration</span><h2>Through the Day</h2>
+    <div class="vine"><span class="ln"></span><span class="petal">✿</span><span class="ln"></span></div></div>
+  <div class="pro">
+    <% d.program.forEach(function(it){ %>
+    <div class="prow rv">
+      <span class="pt"><%= it.time %></span><span class="petal">✿</span>
+      <div><h4><%= it.title %></h4><% if (it.text) { %><p><%= it.text %></p><% } %></div>
+    </div>
+    <% }) %>
+  </div>
+</section>
+<% } %>
+
+<section class="sect wrap" id="venue" style="padding-top:26px">
+  <div class="shead rv"><span class="k">The Garden Awaits</span><h2>Where We Wed</h2>
+    <div class="vine"><span class="ln"></span><span class="petal">✿</span><span class="ln"></span></div></div>
+  <div class="vwrap rv">
+    <img src="<%= img.venue %>" alt="<%= s.venueName %>" loading="lazy" />
+    <div class="vbody">
+      <h3><%= s.venueName %></h3>
+      <% if (s.venueAddress) { %><p class="addr"><%= s.venueAddress %></p><% } %>
+      <div class="vfacts">
+        <div><b><%= s.timeDisplay %></b><span>Ceremony</span></div>
+        <div><b><%= s.arriveDisplay %></b><span>Arrive by</span></div>
+        <% if (s.rsvpByDisplay) { %><div><b><%= s.rsvpByDisplay %></b><span>RSVP by</span></div><% } %>
+      </div>
+      <div class="vbtns">
+        <a class="btn solid" href="https://www.google.com/maps/search/?api=1&query=<%= encodeURIComponent(s.mapQuery) %>" target="_blank" rel="noopener">Directions</a>
+        <% if (s.venueWebsite) { %><a class="btn" href="<%= s.venueWebsite %>" target="_blank" rel="noopener">Venue Website</a><% } %>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sect wrap" id="rsvp" style="padding-top:26px">
+  <div class="shead rv"><span class="k">With Joy We Ask<% if (s.rsvpByDisplay) { %> · reply by <%= s.rsvpByDisplay %><% } %></span><h2>Will You Join Us</h2>
+    <div class="vine"><span class="ln"></span><span class="petal">✿</span><span class="ln"></span></div></div>
+  <form class="rcard rv" id="rsvpForm">
+    <div class="f"><label>Your name</label><input id="rName" required placeholder="Your full name" /></div>
+    <div class="f2">
+      <div class="f"><label>Attending</label><select id="rGo"><option>Joyfully accepts</option><option>Regretfully declines</option></select></div>
+      <div class="f"><label>Guests</label><select id="rNum"><option>1</option><option>2</option><option>3</option><option>4</option><option>5+</option></select></div>
+    </div>
+    <div class="f"><label>A note for us (optional)</label><textarea id="rMsg" placeholder="Wishes, dietary notes, anything at all…"></textarea></div>
+    <button class="btn solid" style="width:100%" type="submit">Send RSVP via WhatsApp</button>
+  </form>
+  <div class="contacts rv">
+    <% (d.contacts || []).forEach(function(c){ if (!c.name && !c.phone) return; %>
+    <div>
+      <span class="nm"><%= c.name %></span><span class="rl"><%= c.role %></span>
+      <% if (c.wa) { %><a href="https://wa.me/<%= String(c.wa).replace(/\D/g,'') %>" target="_blank" rel="noopener" aria-label="WhatsApp"><svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2c-1.5 0-3-.4-4.3-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.6-6.1c-.3-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1-.2.3-.6.8-.8 1-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4 0-.6.1-.8l.4-.5c.1-.2.2-.3.3-.5v-.5c0-.1-.6-1.4-.8-1.9-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.5.1-.7.3-.2.3-.9.9-.9 2.2s.9 2.5 1 2.7a11 11 0 0 0 4.2 3.7c.6.3 1 .4 1.4.6.6.2 1.1.2 1.5.1.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.1-1.2l-.5-.3z"/></svg></a><% } %>
+      <% if (c.phone) { %><a href="tel:<%= c.phone.replace(/\s/g,'') %>" aria-label="Call"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 2 .7 2.9a2 2 0 0 1-.4 2.1L8 10a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.9.6 2.9.7a2 2 0 0 1 1.7 2z"/></svg></a><% } %>
+    </div>
+    <% }) %>
+  </div>
+</section>
+
+<footer>
+  <div class="fm"><%= s.gi %> ✿ <%= s.bi %></div>
+  <div class="fn"><%= s.coupleTitle %> · <%= s.dateMedium %></div>
+  <div class="brand">Crafted with <a href="<%= brandBase %>" target="_blank" rel="noopener">Poruwe</a></div>
+</footer>
+
+<script>
+(function(){
+  'use strict';
+  var io = new IntersectionObserver(function(es){ es.forEach(function(e){ if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }); }, { threshold: .14 });
+  document.querySelectorAll('.rv').forEach(function(el){ io.observe(el); });
+  var when = new Date(document.getElementById('count').dataset.when || 0).getTime();
+  function cd(id, v){ document.getElementById(id).textContent = String(v).padStart(2, '0'); }
+  function tick(){
+    var t = Math.max(0, when - Date.now());
+    cd('cd-d', Math.floor(t / 864e5)); cd('cd-h', Math.floor(t % 864e5 / 36e5));
+    cd('cd-m', Math.floor(t % 36e5 / 6e4)); cd('cd-s', Math.floor(t % 6e4 / 1e3));
+  }
+  if (when) { tick(); setInterval(tick, 1000); }
+  document.getElementById('rsvpForm').addEventListener('submit', function(ev){
+    ev.preventDefault();
+    <% if (preview) { %>
+    alert('This is a preview — the RSVP form starts working the moment the invitation is published.');
+    return;
+    <% } else { %>
+    var name = document.getElementById('rName').value.trim();
+    if (!name) return;
+    var msg = 'RSVP — <%= s.coupleTitle %> (<%= s.dateShort %>)\n'
+      + 'Name: ' + name + '\n'
+      + 'Attending: ' + document.getElementById('rGo').value + '\n'
+      + 'Guests: ' + document.getElementById('rNum').value
+      + (document.getElementById('rMsg').value.trim() ? '\nNote: ' + document.getElementById('rMsg').value.trim() : '');
+    window.open('https://wa.me/<%= s.rsvpWa %>?text=' + encodeURIComponent(msg), '_blank');
+    <% } %>
+  });
+})();
+</script>
+</body>
+</html>

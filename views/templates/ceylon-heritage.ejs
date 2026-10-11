@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="icon" href="/public/icons/favicon.svg" type="image/svg+xml" />
+<link rel="icon" href="/public/icons/favicon-32.png" sizes="32x32" type="image/png" />
+<link rel="apple-touch-icon" href="/public/icons/apple-touch-icon.png" />
+<title><%= s.coupleTitle %> · <%= s.dateShort %></title>
+<meta name="robots" content="noindex" />
+<meta name="description" content="<%= s.coupleTitle %> — <%= s.dateLong %> · <%= s.venueName %>" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Italiana&family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --maroon:#4E1414; --maroon-2:#631B1B; --maroon-deep:#3A0F0F;
+    --gold:#C9A227; --gold-soft:#E3C565; --cream:#F7EEDC; --cream-2:#F2E3C8;
+    --ink:#2E1210; --soft:rgba(247,238,220,.78); --line:rgba(201,162,39,.5);
+    --serif:'Cormorant Garamond',Georgia,serif; --display:'Italiana',serif; --sans:'Montserrat',sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{background:var(--maroon);color:var(--soft);font-family:var(--serif);font-size:1.1rem;line-height:1.8;-webkit-font-smoothing:antialiased;overflow-x:hidden;
+    background-image:radial-gradient(120% 70% at 50% 0%, rgba(99,27,27,.9), transparent 70%),radial-gradient(90% 60% at 50% 100%, rgba(58,15,15,.95), transparent 70%)}
+  img{max-width:100%;display:block}
+  .eyeb{font-family:var(--sans);font-size:.66rem;font-weight:600;letter-spacing:.4em;text-transform:uppercase;color:var(--gold)}
+  .wrap{max-width:980px;margin:0 auto;padding:0 24px}
+  .rv{opacity:0;transform:translateY(30px);transition:opacity 1.15s cubic-bezier(.16,1,.3,1),transform 1.15s cubic-bezier(.16,1,.3,1)}
+  .rv.in{opacity:1;transform:none}
+
+  /* ornamental corner flourish */
+  .flourish{color:var(--gold);opacity:.85}
+
+  /* hero panel */
+  .hero{min-height:100svh;display:flex;align-items:center;justify-content:center;padding:56px 18px}
+  .panel{position:relative;max-width:760px;width:100%;text-align:center;border:2px solid var(--line);padding:clamp(44px,8vw,92px) clamp(22px,6vw,70px);background:
+    linear-gradient(180deg, rgba(58,15,15,.35), rgba(58,15,15,.1) 30%, rgba(58,15,15,.35))}
+  .panel::before{content:'';position:absolute;inset:9px;border:1px solid rgba(201,162,39,.3);pointer-events:none}
+  .corner{position:absolute;width:64px;height:64px}
+  .corner.tl{top:-8px;left:-8px}
+  .corner.tr{top:-8px;right:-8px;transform:scaleX(-1)}
+  .corner.bl{bottom:-8px;left:-8px;transform:scaleY(-1)}
+  .corner.br{bottom:-8px;right:-8px;transform:scale(-1)}
+  .blessing{font-size:1.05rem;color:var(--gold-soft);font-style:italic;margin-bottom:26px}
+  .hname{font-family:var(--display);font-weight:400;font-size:clamp(2.7rem,9.6vw,5.2rem);letter-spacing:.08em;text-transform:uppercase;color:var(--cream);line-height:1.12}
+  .hamp{display:flex;align-items:center;justify-content:center;gap:18px;margin:16px 0}
+  .hamp .ln{width:72px;height:1px;background:var(--line)}
+  .hamp em{font-family:var(--serif);font-style:italic;font-size:1.9rem;color:var(--gold)}
+  .hinvite{margin-top:30px;color:var(--soft);font-size:1.12rem;max-width:42ch;margin-left:auto;margin-right:auto}
+  .hdate{margin-top:26px;font-family:var(--sans);letter-spacing:.3em;font-size:.8rem;color:var(--gold-soft);text-transform:uppercase}
+  .lamp{margin:34px auto 0;width:40px}
+
+  /* section heads */
+  .sect{padding:108px 0}
+  .shead{text-align:center;margin-bottom:64px}
+  .shead h2{font-family:var(--display);font-weight:400;font-size:clamp(2rem,6vw,3.1rem);letter-spacing:.08em;text-transform:uppercase;color:var(--cream);margin-top:14px}
+  .shead .orn{display:flex;align-items:center;justify-content:center;gap:14px;margin-top:18px;color:var(--gold)}
+  .shead .orn .ln{width:64px;height:1px;background:var(--line)}
+
+  /* countdown medallions */
+  .count{display:flex;justify-content:center;gap:clamp(10px,3vw,26px);flex-wrap:wrap}
+  .cmed{width:clamp(74px,19vw,104px);aspect-ratio:1;border:1.5px solid var(--line);border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(58,15,15,.4);position:relative}
+  .cmed::before{content:'';position:absolute;inset:6px;border:1px dashed rgba(201,162,39,.35);border-radius:50%}
+  .cmed b{font-family:var(--display);font-weight:400;font-size:clamp(1.5rem,5vw,2.2rem);color:var(--cream);font-variant-numeric:tabular-nums}
+  .cmed span{font-family:var(--sans);font-size:.54rem;font-weight:600;letter-spacing:.26em;text-transform:uppercase;color:var(--gold-soft);margin-top:4px}
+
+  /* story scrolls */
+  .scrolls{max-width:720px;margin:0 auto;display:flex;flex-direction:column;gap:26px}
+  .scroll{border:1.5px solid var(--line);background:linear-gradient(180deg, rgba(247,238,220,.045), rgba(247,238,220,.015));padding:clamp(24px,5vw,40px);position:relative;text-align:center}
+  .scroll::before,.scroll::after{content:'❦';position:absolute;top:50%;transform:translateY(-50%);color:var(--gold);font-size:1rem;opacity:.8}
+  .scroll::before{left:14px}
+  .scroll::after{right:14px}
+  .scroll .eyeb{letter-spacing:.3em}
+  .scroll h3{font-family:var(--serif);font-weight:500;font-style:italic;font-size:clamp(1.55rem,4.4vw,2.1rem);color:var(--gold-soft);margin:10px 0 12px}
+  .scroll p{color:var(--soft);max-width:54ch;margin:0 auto}
+
+  /* nekath / programme */
+  .nekath{max-width:680px;margin:0 auto}
+  .nrow{display:grid;grid-template-columns:118px 1fr;gap:22px;padding:24px 6px;border-bottom:1px solid rgba(201,162,39,.22);align-items:start}
+  .nrow:first-child{border-top:1px solid rgba(201,162,39,.22)}
+  .ntime{font-family:var(--display);font-size:1.25rem;color:var(--gold);letter-spacing:.06em;white-space:nowrap;padding-top:3px}
+  .nrow h4{font-family:var(--serif);font-weight:600;font-size:1.4rem;color:var(--cream)}
+  .nrow p{font-size:1rem;color:rgba(247,238,220,.62);margin-top:4px}
+
+  /* venue shrine */
+  .vshrine{max-width:860px;margin:0 auto;border:2px solid var(--line);position:relative;background:rgba(58,15,15,.35)}
+  .vshrine::before{content:'';position:absolute;inset:8px;border:1px solid rgba(201,162,39,.28);pointer-events:none;z-index:2}
+  .vshrine img{width:100%;height:clamp(250px,44vh,430px);object-fit:cover;filter:sepia(.18) saturate(.95)}
+  .vbody{padding:clamp(28px,5vw,48px);text-align:center;position:relative}
+  .vbody h3{font-family:var(--display);font-weight:400;font-size:clamp(1.9rem,5.4vw,2.8rem);letter-spacing:.06em;color:var(--cream);text-transform:uppercase}
+  .vbody .addr{color:var(--soft);margin-top:10px;max-width:46ch;margin-left:auto;margin-right:auto}
+  .vmeta{display:flex;justify-content:center;gap:clamp(18px,5vw,44px);flex-wrap:wrap;margin:26px 0 4px}
+  .vmeta div{text-align:center}
+  .vmeta b{display:block;font-family:var(--serif);font-size:1.35rem;color:var(--gold-soft);font-weight:500}
+  .vmeta span{font-family:var(--sans);font-size:.58rem;font-weight:600;letter-spacing:.26em;text-transform:uppercase;color:rgba(247,238,220,.55)}
+  .btn{display:inline-flex;align-items:center;justify-content:center;min-height:50px;padding:12px 32px;border:1.5px solid var(--gold);color:var(--gold-soft);font-family:var(--sans);font-size:.72rem;font-weight:600;letter-spacing:.22em;text-transform:uppercase;text-decoration:none;background:none;cursor:pointer;transition:.35s}
+  .btn:hover{background:var(--gold);color:var(--maroon-deep)}
+  .btn.solid{background:var(--gold);color:var(--maroon-deep)}
+  .btn.solid:hover{background:var(--gold-soft)}
+  .vbtns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-top:24px}
+
+  /* rsvp */
+  .rwrap{max-width:640px;margin:0 auto;border:2px solid var(--line);background:linear-gradient(180deg, rgba(247,238,220,.05), rgba(247,238,220,.02));padding:clamp(26px,5vw,48px);position:relative}
+  .rwrap::before{content:'';position:absolute;inset:8px;border:1px solid rgba(201,162,39,.25);pointer-events:none}
+  .f{margin-bottom:16px;position:relative;z-index:1}
+  .f label{display:block;font-family:var(--sans);font-size:.6rem;font-weight:600;letter-spacing:.26em;text-transform:uppercase;color:var(--gold-soft);margin-bottom:8px}
+  .f input,.f select,.f textarea{width:100%;border:1px solid rgba(201,162,39,.4);background:rgba(58,15,15,.5);padding:13px 14px;font-family:var(--serif);font-size:1.05rem;color:var(--cream);outline:none;border-radius:0;-webkit-appearance:none;transition:.3s}
+  .f input:focus,.f select:focus,.f textarea:focus{border-color:var(--gold)}
+  .f select option{color:var(--ink);background:var(--cream)}
+  .f textarea{min-height:88px;resize:vertical}
+  .f2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .contacts{display:flex;justify-content:center;gap:clamp(20px,6vw,60px);flex-wrap:wrap;margin-top:48px;text-align:center}
+  .contacts .nm{font-family:var(--serif);font-size:1.3rem;color:var(--cream)}
+  .contacts .rl{font-family:var(--sans);font-size:.56rem;letter-spacing:.28em;text-transform:uppercase;color:rgba(247,238,220,.5);display:block;margin:2px 0 10px}
+  .contacts a{display:inline-flex;width:44px;height:44px;border:1px solid var(--line);align-items:center;justify-content:center;color:var(--gold-soft);margin:0 4px;transition:.3s}
+  .contacts a:hover{background:var(--gold);color:var(--maroon-deep)}
+
+  footer{text-align:center;padding:76px 20px 56px;border-top:1px solid rgba(201,162,39,.2)}
+  footer .fm{font-family:var(--display);font-size:1.7rem;letter-spacing:.24em;color:var(--gold)}
+  footer .fn{font-family:var(--serif);font-style:italic;font-size:1.2rem;color:var(--soft);margin-top:10px}
+  footer .brand{margin-top:34px;font-family:var(--sans);font-size:.56rem;letter-spacing:.34em;text-transform:uppercase;color:rgba(247,238,220,.35)}
+  footer .brand a{color:var(--gold-soft);text-decoration:none}
+
+  @media(max-width:620px){
+    .sect{padding:84px 0}
+    .nrow{grid-template-columns:1fr;gap:4px}
+    .corner{width:44px;height:44px}
+    .f2{grid-template-columns:1fr}
+  }
+</style>
+<style><%- themeCss %></style>
+</head>
+<body class="theme-<%= t.id %>">
+<% if (preview) { %><div class="pv-ribbon" style="position:fixed;top:18px;left:-52px;z-index:99999;transform:rotate(-35deg);background:#C9A227;color:#3A0F0F;font:600 11px/1 Montserrat,Arial,sans-serif;letter-spacing:.22em;padding:11px 58px;box-shadow:0 4px 16px rgba(0,0,0,.3);pointer-events:none">PREVIEW</div>
+<style>@media(max-width:640px){.pv-ribbon{top:8px;left:-58px;padding:8px 54px;font-size:9px}}</style><% } %>
+
+<header class="hero">
+  <div class="panel rv in">
+    <svg class="corner tl flourish" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M2 62V22C2 11 11 2 22 2h40"/><path d="M10 62V26C10 17 17 10 26 10h36" opacity=".55"/><circle cx="22" cy="22" r="3.4" fill="currentColor" stroke="none"/><path d="M22 13c3 3.4 3 8-0 11-3-3-3-7.6 0-11z" fill="currentColor" stroke="none" opacity=".8"/></svg>
+    <svg class="corner tr flourish" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M2 62V22C2 11 11 2 22 2h40"/><path d="M10 62V26C10 17 17 10 26 10h36" opacity=".55"/><circle cx="22" cy="22" r="3.4" fill="currentColor" stroke="none"/><path d="M22 13c3 3.4 3 8-0 11-3-3-3-7.6 0-11z" fill="currentColor" stroke="none" opacity=".8"/></svg>
+    <svg class="corner bl flourish" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M2 62V22C2 11 11 2 22 2h40"/><path d="M10 62V26C10 17 17 10 26 10h36" opacity=".55"/><circle cx="22" cy="22" r="3.4" fill="currentColor" stroke="none"/><path d="M22 13c3 3.4 3 8-0 11-3-3-3-7.6 0-11z" fill="currentColor" stroke="none" opacity=".8"/></svg>
+    <svg class="corner br flourish" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M2 62V22C2 11 11 2 22 2h40"/><path d="M10 62V26C10 17 17 10 26 10h36" opacity=".55"/><circle cx="22" cy="22" r="3.4" fill="currentColor" stroke="none"/><path d="M22 13c3 3.4 3 8-0 11-3-3-3-7.6 0-11z" fill="currentColor" stroke="none" opacity=".8"/></svg>
+    <p class="blessing">ආදරයෙන් ඇරයුම් කරමු</p>
+    <span class="eyeb">Together with their beloved families</span>
+    <h1 class="hname" style="margin-top:26px"><%= s.groom %></h1>
+    <div class="hamp"><span class="ln"></span><em>weds</em><span class="ln"></span></div>
+    <h1 class="hname"><%= s.bride %></h1>
+    <p class="hinvite">request the honour of your gracious presence at their poruwa ceremony and wedding celebration</p>
+    <div class="hdate"><%= s.dateLong %></div>
+    <svg class="lamp flourish" viewBox="0 0 40 56" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M20 4c2.6 4.2 2.6 8-0 11-2.6-3-2.6-6.8 0-11z" fill="currentColor" stroke="none"/><path d="M12 22h16l-2.5 7h-11z"/><path d="M8 33h24M14 33c0 6 2.6 9 6 9s6-3 6-9"/><path d="M20 42v6M12 52h16"/></svg>
+  </div>
+</header>
+
+<section class="sect wrap">
+  <div class="shead rv"><span class="eyeb">Counting the Moments</span><h2>Until We Wed</h2>
+    <div class="orn"><span class="ln"></span>❖<span class="ln"></span></div></div>
+  <div class="count rv" id="count" data-when="<%= s.countdownISO %>">
+    <div class="cmed"><b id="cd-d">—</b><span>Days</span></div>
+    <div class="cmed"><b id="cd-h">—</b><span>Hours</span></div>
+    <div class="cmed"><b id="cd-m">—</b><span>Minutes</span></div>
+    <div class="cmed"><b id="cd-s">—</b><span>Seconds</span></div>
+  </div>
+</section>
+
+<% if ((d.story || []).length) { %>
+<section class="sect wrap" style="padding-top:20px">
+  <div class="shead rv"><span class="eyeb">Our Journey</span><h2>A Love Story</h2>
+    <div class="orn"><span class="ln"></span>❖<span class="ln"></span></div></div>
+  <div class="scrolls">
+    <% d.story.forEach(function(it){ %>
+    <article class="scroll rv">
+      <% if (it.label) { %><span class="eyeb"><%= it.label %></span><% } %>
+      <h3><%= it.title %></h3>
+      <p><%= it.text %></p>
+    </article>
+    <% }) %>
+  </div>
+</section>
+<% } %>
+
+<% if ((d.program || []).length) { %>
+<section class="sect wrap" style="padding-top:20px">
+  <div class="shead rv"><span class="eyeb">The Auspicious Day</span><h2>Order of Ceremony</h2>
+    <div class="orn"><span class="ln"></span>❖<span class="ln"></span></div></div>
+  <div class="nekath">
+    <% d.program.forEach(function(it){ %>
+    <div class="nrow rv">
+      <div class="ntime"><%= it.time %></div>
+      <div><h4><%= it.title %></h4><% if (it.text) { %><p><%= it.text %></p><% } %></div>
+    </div>
+    <% }) %>
+  </div>
+</section>
+<% } %>
+
+<section class="sect wrap" id="venue" style="padding-top:20px">
+  <div class="shead rv"><span class="eyeb">The Setting</span><h2>Where We Gather</h2>
+    <div class="orn"><span class="ln"></span>❖<span class="ln"></span></div></div>
+  <div class="vshrine rv">
+    <img src="<%= img.venue %>" alt="<%= s.venueName %>" loading="lazy" />
+    <div class="vbody">
+      <h3><%= s.venueName %></h3>
+      <% if (s.venueAddress) { %><p class="addr"><%= s.venueAddress %></p><% } %>
+      <div class="vmeta">
+        <div><b><%= s.timeDisplay %></b><span>Ceremony</span></div>
+        <div><b><%= s.arriveDisplay %></b><span>Arrive By</span></div>
+        <% if (s.rsvpByDisplay) { %><div><b><%= s.rsvpByDisplay %></b><span>RSVP By</span></div><% } %>
+      </div>
+      <div class="vbtns">
+        <a class="btn solid" href="https://www.google.com/maps/search/?api=1&query=<%= encodeURIComponent(s.mapQuery) %>" target="_blank" rel="noopener">Directions</a>
+        <% if (s.venueWebsite) { %><a class="btn" href="<%= s.venueWebsite %>" target="_blank" rel="noopener">Venue Website</a><% } %>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sect wrap" id="rsvp" style="padding-top:20px">
+  <div class="shead rv"><span class="eyeb">With Honour We Ask</span><h2>Will You Join Us</h2>
+    <div class="orn"><span class="ln"></span>❖<span class="ln"></span></div></div>
+  <form class="rwrap rv" id="rsvpForm">
+    <div class="f"><label>Your name</label><input id="rName" required placeholder="Your full name" /></div>
+    <div class="f2">
+      <div class="f"><label>Attending</label><select id="rGo"><option>Joyfully accepts</option><option>Regretfully declines</option></select></div>
+      <div class="f"><label>Guests</label><select id="rNum"><option>1</option><option>2</option><option>3</option><option>4</option><option>5+</option></select></div>
+    </div>
+    <div class="f"><label>Your blessing (optional)</label><textarea id="rMsg" placeholder="A wish for the couple…"></textarea></div>
+    <button class="btn solid" style="width:100%" type="submit">Send RSVP on WhatsApp</button>
+  </form>
+  <div class="contacts rv">
+    <% (d.contacts || []).forEach(function(c){ if (!c.name && !c.phone) return; %>
+    <div>
+      <span class="nm"><%= c.name %></span><span class="rl"><%= c.role %></span>
+      <% if (c.wa) { %><a href="https://wa.me/<%= String(c.wa).replace(/\D/g,'') %>" target="_blank" rel="noopener" aria-label="WhatsApp"><svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2c-1.5 0-3-.4-4.3-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.6-6.1c-.3-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1-.2.3-.6.8-.8 1-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4 0-.6.1-.8l.4-.5c.1-.2.2-.3.3-.5v-.5c0-.1-.6-1.4-.8-1.9-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.5.1-.7.3-.2.3-.9.9-.9 2.2s.9 2.5 1 2.7a11 11 0 0 0 4.2 3.7c.6.3 1 .4 1.4.6.6.2 1.1.2 1.5.1.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.1-1.2l-.5-.3z"/></svg></a><% } %>
+      <% if (c.phone) { %><a href="tel:<%= c.phone.replace(/\s/g,'') %>" aria-label="Call"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 2 .7 2.9a2 2 0 0 1-.4 2.1L8 10a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.9.6 2.9.7a2 2 0 0 1 1.7 2z"/></svg></a><% } %>
+    </div>
+    <% }) %>
+  </div>
+</section>
+
+<footer>
+  <div class="fm"><%= s.gi %> ❖ <%= s.bi %></div>
+  <div class="fn"><%= s.coupleTitle %> · <%= s.dateMedium %></div>
+  <div class="brand">Crafted with <a href="<%= brandBase %>" target="_blank" rel="noopener">Poruwe</a></div>
+</footer>
+
+<script>
+(function(){
+  'use strict';
+  var io = new IntersectionObserver(function(es){ es.forEach(function(e){ if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }); }, { threshold: .14 });
+  document.querySelectorAll('.rv').forEach(function(el){ io.observe(el); });
+  var when = new Date(document.getElementById('count').dataset.when || 0).getTime();
+  function cd(id, v){ document.getElementById(id).textContent = String(v).padStart(2, '0'); }
+  function tick(){
+    var t = Math.max(0, when - Date.now());
+    cd('cd-d', Math.floor(t / 864e5)); cd('cd-h', Math.floor(t % 864e5 / 36e5));
+    cd('cd-m', Math.floor(t % 36e5 / 6e4)); cd('cd-s', Math.floor(t % 6e4 / 1e3));
+  }
+  if (when) { tick(); setInterval(tick, 1000); }
+  document.getElementById('rsvpForm').addEventListener('submit', function(ev){
+    ev.preventDefault();
+    <% if (preview) { %>
+    alert('This is a preview — the RSVP form starts working the moment the invitation is published.');
+    return;
+    <% } else { %>
+    var name = document.getElementById('rName').value.trim();
+    if (!name) return;
+    var msg = 'RSVP — <%= s.coupleTitle %> (<%= s.dateShort %>)\n'
+      + 'Name: ' + name + '\n'
+      + 'Attending: ' + document.getElementById('rGo').value + '\n'
+      + 'Guests: ' + document.getElementById('rNum').value
+      + (document.getElementById('rMsg').value.trim() ? '\nBlessing: ' + document.getElementById('rMsg').value.trim() : '');
+    window.open('https://wa.me/<%= s.rsvpWa %>?text=' + encodeURIComponent(msg), '_blank');
+    <% } %>
+  });
+})();
+</script>
+</body>
+</html>

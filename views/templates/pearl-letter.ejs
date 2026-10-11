@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="icon" href="/public/icons/favicon.svg" type="image/svg+xml" />
+<link rel="icon" href="/public/icons/favicon-32.png" sizes="32x32" type="image/png" />
+<link rel="apple-touch-icon" href="/public/icons/apple-touch-icon.png" />
+<title><%= s.coupleTitle %> · <%= s.dateShort %></title>
+<meta name="robots" content="noindex" />
+<meta name="description" content="<%= s.coupleTitle %> — <%= s.dateLong %> · <%= s.venueName %>" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=Italiana&family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --paper:#FAF7F0; --sheet:#FFFDF8; --ink:#3E3A33; --faded:#847C6E;
+    --pearl:#A8927B; --pearl-deep:#8C7560; --blush:#C9AC96; --line:rgba(168,146,123,.34);
+    --serif:'Cormorant Garamond',Georgia,serif; --display:'Italiana',serif; --sans:'Montserrat',sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{background:var(--paper);color:var(--ink);font-family:var(--serif);font-size:1.16rem;line-height:1.95;-webkit-font-smoothing:antialiased;
+    background-image:radial-gradient(100% 60% at 50% 0%, rgba(201,172,150,.12), transparent 60%)}
+  img{max-width:100%;display:block}
+  .k{font-family:var(--sans);font-size:.62rem;font-weight:600;letter-spacing:.36em;text-transform:uppercase;color:var(--pearl-deep)}
+  .rv{opacity:0;transform:translateY(22px);transition:opacity 1.15s cubic-bezier(.16,1,.3,1),transform 1.15s cubic-bezier(.16,1,.3,1)}
+  .rv.in{opacity:1;transform:none}
+
+  .sheet{max-width:660px;margin:clamp(26px,6vw,70px) auto;background:var(--sheet);border:1px solid var(--line);box-shadow:0 40px 90px -50px rgba(62,58,51,.4);padding:clamp(34px,7vw,84px) clamp(24px,6vw,76px);position:relative}
+  .sheet::before{content:'';position:absolute;inset:10px;border:1px solid rgba(168,146,123,.18);pointer-events:none}
+
+  .stamp{width:84px;height:84px;margin:0 auto 34px;border-radius:50%;background:radial-gradient(circle at 36% 32%, #C0A98F, var(--pearl) 55%, var(--pearl-deep));display:flex;align-items:center;justify-content:center;box-shadow:0 10px 26px -10px rgba(140,117,96,.6), inset 0 2px 5px rgba(255,255,255,.4), inset 0 -3px 7px rgba(62,58,51,.3);position:relative}
+  .stamp::before{content:'';position:absolute;inset:9px;border:1px dashed rgba(250,247,240,.55);border-radius:50%}
+  .stamp span{font-family:var(--display);font-size:1.5rem;color:#FAF7F0;letter-spacing:.08em}
+
+  .salute{text-align:center;margin-bottom:44px}
+  .salute .k{display:block;margin-bottom:16px}
+  .salute h1{font-family:var(--display);font-weight:400;font-size:clamp(2.1rem,7vw,3.3rem);letter-spacing:.04em;color:var(--ink);line-height:1.2}
+  .salute .amp{font-style:italic;color:var(--pearl-deep);font-size:clamp(1.3rem,3.6vw,1.8rem)}
+  .dateline{margin-top:18px;font-style:italic;color:var(--faded);font-size:1.1rem}
+
+  .letter p.body{margin-bottom:26px;color:#4A463E}
+  .letter p.body:first-of-type::first-letter{font-family:var(--display);font-size:3.2em;float:left;line-height:.82;padding:6px 10px 0 0;color:var(--pearl-deep)}
+  .letter .dear{font-style:italic;font-size:1.3rem;margin-bottom:22px}
+  .hr{display:flex;align-items:center;gap:14px;margin:44px 0;color:var(--pearl)}
+  .hr .ln{flex:1;height:1px;background:var(--line)}
+  .hr i{font-style:normal;font-size:.8rem}
+
+  .fact{display:flex;justify-content:space-between;gap:16px;align-items:baseline;padding:13px 2px;border-bottom:1px dotted var(--line);flex-wrap:wrap}
+  .fact span{font-family:var(--sans);font-size:.6rem;font-weight:600;letter-spacing:.3em;text-transform:uppercase;color:var(--faded)}
+  .fact b{font-weight:500;font-size:1.2rem;text-align:right}
+  .facts{margin-bottom:10px}
+  .flink{text-align:center;margin-top:26px}
+  .btn{display:inline-flex;align-items:center;justify-content:center;min-height:50px;padding:13px 32px;border:1.5px solid var(--pearl);color:var(--pearl-deep);font-family:var(--sans);font-size:.68rem;font-weight:600;letter-spacing:.24em;text-transform:uppercase;text-decoration:none;background:none;cursor:pointer;transition:.35s;border-radius:3px}
+  .btn:hover{background:var(--pearl);color:#FAF7F0}
+  .btn.solid{background:var(--pearl);color:#FAF7F0}
+  .btn.solid:hover{background:var(--pearl-deep)}
+
+  .count{display:flex;justify-content:center;gap:4px;margin:10px 0 6px;font-variant-numeric:tabular-nums;flex-wrap:wrap}
+  .count b{font-family:var(--display);font-weight:400;font-size:clamp(1.4rem,4.6vw,2rem);color:var(--pearl-deep)}
+  .count i{font-style:italic;color:var(--faded);font-size:1rem;margin:0 10px 0 4px;align-self:flex-end;padding-bottom:4px}
+
+  .sched{margin:6px 0}
+  .sched .row{display:flex;gap:14px;align-items:baseline;padding:10px 0;border-bottom:1px dotted var(--line)}
+  .sched time{font-family:var(--sans);font-size:.7rem;font-weight:600;letter-spacing:.16em;color:var(--pearl-deep);min-width:82px}
+  .sched b{font-weight:500;font-size:1.18rem}
+  .sched p{font-size:1rem;color:var(--faded)}
+
+  .sign{margin-top:40px;text-align:right}
+  .sign .yours{font-style:italic;color:var(--faded)}
+  .sign .names{font-family:var(--display);font-size:clamp(1.7rem,5vw,2.4rem);color:var(--ink);margin-top:6px;letter-spacing:.04em}
+
+  .ps{margin-top:44px;border:1px solid var(--line);background:rgba(168,146,123,.06);padding:clamp(22px,4vw,34px);border-radius:4px}
+  .ps .k{display:block;margin-bottom:14px}
+  .f{margin-bottom:15px}
+  .f label{display:block;font-family:var(--sans);font-size:.58rem;font-weight:600;letter-spacing:.26em;text-transform:uppercase;color:var(--faded);margin-bottom:7px}
+  .f input,.f select,.f textarea{width:100%;border:0;border-bottom:1px solid var(--line);background:none;padding:9px 2px;font-family:var(--serif);font-size:1.12rem;color:var(--ink);outline:none;border-radius:0;-webkit-appearance:none;transition:.3s}
+  .f input:focus,.f select:focus,.f textarea:focus{border-color:var(--pearl-deep)}
+  .f textarea{min-height:64px;resize:vertical}
+  .f2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+  .pcontacts{margin-top:26px;display:flex;gap:26px;justify-content:center;flex-wrap:wrap;text-align:center}
+  .pcontacts a{color:var(--pearl-deep);text-decoration:none;border-bottom:1px solid var(--line);font-style:italic;transition:.3s}
+  .pcontacts a:hover{border-color:var(--pearl-deep)}
+  .pcontacts .who{font-family:var(--sans);font-size:.58rem;letter-spacing:.26em;text-transform:uppercase;color:var(--faded);display:block;margin-bottom:4px}
+
+  .envelope-foot{text-align:center;padding:40px 20px 60px}
+  .envelope-foot .k{color:var(--faded)}
+  .envelope-foot a{color:var(--pearl-deep);text-decoration:none}
+
+  @media(max-width:560px){
+    .fact b{text-align:left}
+    .f2{grid-template-columns:1fr}
+  }
+</style>
+<style><%- themeCss %></style>
+</head>
+<body class="theme-<%= t.id %>">
+<% if (preview) { %><div class="pv-ribbon" style="position:fixed;top:18px;left:-52px;z-index:99999;transform:rotate(-35deg);background:#A8927B;color:#FAF7F0;font:600 11px/1 Montserrat,Arial,sans-serif;letter-spacing:.22em;padding:11px 58px;box-shadow:0 4px 16px rgba(0,0,0,.25);pointer-events:none">PREVIEW</div>
+<style>@media(max-width:640px){.pv-ribbon{top:8px;left:-58px;padding:8px 54px;font-size:9px}}</style><% } %>
+
+<main class="sheet">
+  <div class="stamp rv in"><span><%= s.gi %>·<%= s.bi %></span></div>
+
+  <header class="salute rv in">
+    <span class="k">A letter from</span>
+    <h1><%= s.groom %> <span class="amp">&amp;</span> <%= s.bride %></h1>
+    <p class="dateline">written with love, for <%= s.dateLong %></p>
+  </header>
+
+  <div class="letter">
+    <p class="dear rv">Dear family &amp; friends,</p>
+    <p class="body rv">We are writing with the happiest news we have ever had to share — we are getting married. After every chapter that brought us here, we have chosen <i><%= s.dateMedium %></i> as the day we say our vows, and it would mean the world to have you beside us.</p>
+
+    <% (d.story || []).forEach(function(it){ %>
+    <p class="body rv"><% if (it.title) { %><i style="color:var(--pearl-deep)"><%= it.title %>.</i> <% } %><%= it.text %></p>
+    <% }) %>
+
+    <div class="hr rv"><span class="ln"></span><i>❧</i><span class="ln"></span></div>
+
+    <div class="facts rv">
+      <div class="fact"><span>The day</span><b><%= s.dateLong %></b></div>
+      <div class="fact"><span>Ceremony</span><b><%= s.timeDisplay %> · arrive by <%= s.arriveDisplay %></b></div>
+      <div class="fact"><span>The place</span><b><%= s.venueName %></b></div>
+      <% if (s.venueAddress) { %><div class="fact"><span>Address</span><b style="font-size:1.05rem"><%= s.venueAddress %></b></div><% } %>
+      <% if (s.rsvpByDisplay) { %><div class="fact"><span>Kindly reply by</span><b><%= s.rsvpByDisplay %></b></div><% } %>
+    </div>
+    <div class="flink rv">
+      <a class="btn" href="https://www.google.com/maps/search/?api=1&query=<%= encodeURIComponent(s.mapQuery) %>" target="_blank" rel="noopener">Find your way there</a>
+      <% if (s.venueWebsite) { %>&nbsp;<a class="btn" href="<%= s.venueWebsite %>" target="_blank" rel="noopener">The venue</a><% } %>
+    </div>
+
+    <div class="hr rv"><span class="ln"></span><i>❧</i><span class="ln"></span></div>
+
+    <p class="body rv" style="text-align:center;margin-bottom:8px"><i>Only</i></p>
+    <div class="count rv" id="count" data-when="<%= s.countdownISO %>">
+      <b id="cd-d">—</b><i>days,</i><b id="cd-h">—</b><i>hours &amp;</i><b id="cd-m">—</b><i>minutes to go</i>
+    </div>
+
+    <% if ((d.program || []).length) { %>
+    <div class="hr rv"><span class="ln"></span><i>❧</i><span class="ln"></span></div>
+    <p class="body rv" style="margin-bottom:12px">Here is how we imagine the day unfolding:</p>
+    <div class="sched rv">
+      <% d.program.forEach(function(it){ %>
+      <div class="row"><time><%= it.time %></time><div><b><%= it.title %></b><% if (it.text) { %><p><%= it.text %></p><% } %></div></div>
+      <% }) %>
+    </div>
+    <% } %>
+
+    <div class="sign rv">
+      <p class="yours">With all our love,</p>
+      <p class="names"><%= s.groom %> &amp; <%= s.bride %></p>
+    </div>
+
+    <div class="ps rv" id="rsvp">
+      <span class="k">P.S. — do write back</span>
+      <form id="rsvpForm">
+        <div class="f"><label>Your name</label><input id="rName" required placeholder="Your full name" /></div>
+        <div class="f2">
+          <div class="f"><label>Attending</label><select id="rGo"><option>Joyfully accepts</option><option>Regretfully declines</option></select></div>
+          <div class="f"><label>Guests</label><select id="rNum"><option>1</option><option>2</option><option>3</option><option>4</option><option>5+</option></select></div>
+        </div>
+        <div class="f"><label>A line for us (optional)</label><textarea id="rMsg" placeholder="We'd love a word back…"></textarea></div>
+        <button class="btn solid" style="width:100%" type="submit">Reply via WhatsApp</button>
+      </form>
+      <div class="pcontacts">
+        <% (d.contacts || []).forEach(function(c){ if (!c.name) return; %>
+        <div><span class="who"><%= c.role %></span><% if (c.wa) { %><a href="https://wa.me/<%= String(c.wa).replace(/\D/g,'') %>" target="_blank" rel="noopener"><%= c.name %></a><% } else { %><i><%= c.name %></i><% } %></div>
+        <% }) %>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer class="envelope-foot">
+  <span class="k">Sealed &amp; sent with <a href="<%= brandBase %>" target="_blank" rel="noopener">Poruwe</a></span>
+</footer>
+
+<script>
+(function(){
+  'use strict';
+  var io = new IntersectionObserver(function(es){ es.forEach(function(e){ if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }); }, { threshold: .1 });
+  document.querySelectorAll('.rv').forEach(function(el){ io.observe(el); });
+  var when = new Date(document.getElementById('count').dataset.when || 0).getTime();
+  function cd(id, v){ document.getElementById(id).textContent = String(v); }
+  function tick(){
+    var t = Math.max(0, when - Date.now());
+    cd('cd-d', Math.floor(t / 864e5)); cd('cd-h', Math.floor(t % 864e5 / 36e5)); cd('cd-m', Math.floor(t % 36e5 / 6e4));
+  }
+  if (when) { tick(); setInterval(tick, 30000); }
+  document.getElementById('rsvpForm').addEventListener('submit', function(ev){
+    ev.preventDefault();
+    <% if (preview) { %>
+    alert('This is a preview — the RSVP form starts working the moment the invitation is published.');
+    return;
+    <% } else { %>
+    var name = document.getElementById('rName').value.trim();
+    if (!name) return;
+    var msg = 'RSVP — <%= s.coupleTitle %> (<%= s.dateShort %>)\n'
+      + 'Name: ' + name + '\n'
+      + 'Attending: ' + document.getElementById('rGo').value + '\n'
+      + 'Guests: ' + document.getElementById('rNum').value
+      + (document.getElementById('rMsg').value.trim() ? '\nNote: ' + document.getElementById('rMsg').value.trim() : '');
+    window.open('https://wa.me/<%= s.rsvpWa %>?text=' + encodeURIComponent(msg), '_blank');
+    <% } %>
+  });
+})();
+</script>
+</body>
+</html>

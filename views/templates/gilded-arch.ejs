@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="icon" href="/public/icons/favicon.svg" type="image/svg+xml" />
+<link rel="icon" href="/public/icons/favicon-32.png" sizes="32x32" type="image/png" />
+<link rel="apple-touch-icon" href="/public/icons/apple-touch-icon.png" />
+<title><%= s.coupleTitle %> · <%= s.dateShort %></title>
+<meta name="robots" content="noindex" />
+<meta name="description" content="<%= s.coupleTitle %> — <%= s.dateLong %> · <%= s.venueName %>" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Italiana&family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --noir:#101014; --noir-2:#17171D; --panel:#1C1C24;
+    --champ:#EFE3C8; --gild:#D6B86B; --gild-deep:#B99545; --dim:rgba(239,227,200,.55);
+    --hair:rgba(214,184,107,.4); --hair-dim:rgba(214,184,107,.18);
+    --display:'Italiana',serif; --serif:'Cormorant Garamond',Georgia,serif; --sans:'Montserrat',sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{background:var(--noir);color:var(--dim);font-family:var(--serif);font-size:1.1rem;line-height:1.8;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+  img{max-width:100%;display:block}
+  .k{font-family:var(--sans);font-size:.62rem;font-weight:600;letter-spacing:.44em;text-transform:uppercase;color:var(--gild)}
+  .wrap{max-width:960px;margin:0 auto;padding:0 24px}
+  .rv{opacity:0;transform:translateY(28px);transition:opacity 1.2s cubic-bezier(.16,1,.3,1),transform 1.2s cubic-bezier(.16,1,.3,1)}
+  .rv.in{opacity:1;transform:none}
+
+  /* deco hero: grand arch */
+  .hero{min-height:100svh;display:flex;align-items:center;justify-content:center;padding:70px 18px;position:relative;overflow:hidden;
+    background:radial-gradient(90% 60% at 50% 100%, rgba(214,184,107,.09), transparent 60%), var(--noir)}
+  .rays{position:absolute;inset:-20%;background:repeating-conic-gradient(from -90deg at 50% 110%, rgba(214,184,107,.05) 0 2.6deg, transparent 2.6deg 9deg);pointer-events:none}
+  .arch{position:relative;width:min(560px,92vw);border:1.5px solid var(--hair);border-radius:300px 300px 0 0;padding:clamp(54px,9vw,96px) clamp(22px,6vw,66px) clamp(38px,6vw,64px);text-align:center;background:linear-gradient(180deg, rgba(28,28,36,.6), rgba(16,16,20,.2))}
+  .arch::before{content:'';position:absolute;inset:10px;border:1px solid var(--hair-dim);border-radius:288px 288px 0 0;pointer-events:none}
+  .arch::after{content:'';position:absolute;left:50%;top:-34px;transform:translateX(-50%);width:9px;height:9px;background:var(--gild);rotate:45deg;box-shadow:0 18px 0 -2px var(--gild),0 -18px 0 -2px var(--gild),18px 0 0 -2px var(--gild),-18px 0 0 -2px var(--gild)}
+  .fan{width:84px;margin:0 auto 26px;color:var(--gild)}
+  .hname{font-family:var(--display);font-weight:400;font-size:clamp(2.6rem,9vw,4.9rem);line-height:1.08;letter-spacing:.1em;text-transform:uppercase;color:var(--champ);opacity:0;transform:translateY(20px);animation:up 1.5s .4s cubic-bezier(.16,1,.3,1) forwards}
+  .hname.b{animation-delay:.65s}
+  .deco-amp{display:flex;align-items:center;justify-content:center;gap:16px;margin:12px 0;opacity:0;animation:fade 1.4s .9s forwards}
+  .deco-amp .ln{width:58px;height:1px;background:var(--hair)}
+  .deco-amp b{width:8px;height:8px;background:var(--gild);rotate:45deg}
+  .hero .k{display:block;opacity:0;animation:fade 1.4s .2s forwards}
+  .hsub{margin-top:26px;font-style:italic;color:var(--dim);opacity:0;animation:fade 1.5s 1.2s forwards}
+  .hdate{margin-top:18px;font-family:var(--sans);font-size:.76rem;letter-spacing:.34em;text-transform:uppercase;color:var(--gild);opacity:0;animation:fade 1.5s 1.4s forwards}
+  @keyframes up{to{opacity:1;transform:none}}
+  @keyframes fade{to{opacity:1}}
+
+  .sect{padding:116px 0}
+  .shead{text-align:center;margin-bottom:62px}
+  .shead h2{font-family:var(--display);font-weight:400;font-size:clamp(2rem,6vw,3.2rem);letter-spacing:.1em;text-transform:uppercase;color:var(--champ);margin-top:14px}
+  .diadem{display:flex;align-items:center;justify-content:center;gap:10px;margin-top:18px;color:var(--gild)}
+  .diadem .ln{width:54px;height:1px;background:var(--hair)}
+  .diadem b{width:6px;height:6px;background:currentColor;rotate:45deg}
+
+  /* countdown: stepped deco frames */
+  .count{display:flex;justify-content:center;gap:clamp(10px,2.6vw,22px);flex-wrap:wrap}
+  .step{min-width:clamp(76px,19vw,106px);padding:20px 12px 16px;text-align:center;border:1px solid var(--hair);position:relative;background:var(--noir-2);
+    clip-path:polygon(0 14px,14px 0,calc(100% - 14px) 0,100% 14px,100% 100%,0 100%)}
+  .step::before{content:'';position:absolute;inset:5px;border:1px solid var(--hair-dim);clip-path:polygon(0 11px,11px 0,calc(100% - 11px) 0,100% 11px,100% 100%,0 100%)}
+  .step b{font-family:var(--display);font-weight:400;font-size:clamp(1.7rem,5.2vw,2.6rem);color:var(--champ);font-variant-numeric:tabular-nums}
+  .step span{display:block;font-family:var(--sans);font-size:.54rem;font-weight:600;letter-spacing:.3em;text-transform:uppercase;color:var(--gild);margin-top:5px}
+
+  /* story: deco panels with chevron */
+  .panels{max-width:720px;margin:0 auto;display:flex;flex-direction:column;gap:24px}
+  .dp{border:1px solid var(--hair-dim);background:linear-gradient(180deg, rgba(28,28,36,.75), rgba(23,23,29,.4));padding:clamp(26px,5vw,44px);position:relative;text-align:center}
+  .dp::before,.dp::after{content:'';position:absolute;top:0;bottom:0;width:26px}
+  .dp::before{left:0;border-right:1px solid var(--hair-dim);background:repeating-linear-gradient(-45deg, transparent 0 7px, var(--hair-dim) 7px 8px)}
+  .dp::after{right:0;border-left:1px solid var(--hair-dim);background:repeating-linear-gradient(45deg, transparent 0 7px, var(--hair-dim) 7px 8px)}
+  .dp h3{font-family:var(--display);font-weight:400;font-size:clamp(1.5rem,4.4vw,2.1rem);letter-spacing:.08em;color:var(--champ);text-transform:uppercase;margin:8px 0 12px}
+  .dp p{max-width:48ch;margin:0 auto;color:var(--dim)}
+
+  /* program marquee rows */
+  .bill{max-width:660px;margin:0 auto;border:1px solid var(--hair);background:var(--noir-2);padding:clamp(22px,4vw,40px)}
+  .bill .brow{display:flex;align-items:baseline;gap:16px;padding:17px 2px;border-bottom:1px solid var(--hair-dim)}
+  .bill .brow:last-child{border-bottom:0}
+  .bill time{font-family:var(--sans);font-size:.72rem;font-weight:600;letter-spacing:.24em;color:var(--gild);min-width:88px;white-space:nowrap}
+  .bill .dots{flex:1;border-bottom:1px dotted var(--hair-dim);transform:translateY(-4px)}
+  .bill h4{font-weight:500;font-size:1.3rem;color:var(--champ)}
+  .bill p{width:100%;font-size:.96rem;color:rgba(239,227,200,.42);margin-top:2px}
+  .bill .brow div.tx{flex-basis:100%}
+
+  /* venue: marquee arch photo */
+  .vmarq{max-width:780px;margin:0 auto;text-align:center}
+  .vmarq .ph{border:1.5px solid var(--hair);border-radius:260px 260px 0 0;overflow:hidden;position:relative}
+  .vmarq .ph::before{content:'';position:absolute;inset:9px;border:1px solid var(--hair-dim);border-radius:250px 250px 0 0;z-index:2;pointer-events:none}
+  .vmarq img{width:100%;height:clamp(300px,50vh,480px);object-fit:cover;filter:saturate(.85) contrast(1.04)}
+  .vinfo{border:1px solid var(--hair);border-top:0;background:var(--noir-2);padding:clamp(26px,5vw,44px)}
+  .vinfo h3{font-family:var(--display);font-weight:400;font-size:clamp(1.9rem,5.4vw,2.9rem);letter-spacing:.08em;text-transform:uppercase;color:var(--champ)}
+  .vinfo .addr{color:var(--dim);margin-top:8px}
+  .vfacts{display:flex;justify-content:center;gap:clamp(20px,5vw,48px);flex-wrap:wrap;margin:24px 0}
+  .vfacts b{display:block;font-size:1.3rem;font-weight:500;color:var(--gild)}
+  .vfacts span{font-family:var(--sans);font-size:.56rem;font-weight:600;letter-spacing:.28em;text-transform:uppercase;color:rgba(239,227,200,.4)}
+  .btn{display:inline-flex;align-items:center;justify-content:center;min-height:50px;padding:13px 34px;border:1px solid var(--gild);color:var(--gild);font-family:var(--sans);font-size:.7rem;font-weight:600;letter-spacing:.26em;text-transform:uppercase;text-decoration:none;background:none;cursor:pointer;transition:.35s;clip-path:polygon(0 10px,10px 0,calc(100% - 10px) 0,100% 10px,100% calc(100% - 10px),calc(100% - 10px) 100%,10px 100%,0 calc(100% - 10px))}
+  .btn:hover{background:var(--gild);color:var(--noir)}
+  .btn.solid{background:var(--gild);color:var(--noir)}
+  .btn.solid:hover{background:var(--champ)}
+  .vbtns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+
+  /* rsvp ticket */
+  .ticket{max-width:620px;margin:0 auto;border:1px solid var(--hair);background:var(--noir-2);position:relative;padding:clamp(28px,5vw,48px)}
+  .ticket::before{content:'';position:absolute;inset:7px;border:1px dashed var(--hair-dim);pointer-events:none}
+  .f{margin-bottom:17px;position:relative}
+  .f label{display:block;font-family:var(--sans);font-size:.58rem;font-weight:600;letter-spacing:.3em;text-transform:uppercase;color:var(--gild);margin-bottom:8px}
+  .f input,.f select,.f textarea{width:100%;border:1px solid var(--hair-dim);background:rgba(16,16,20,.7);padding:13px 14px;font-family:var(--serif);font-size:1.05rem;color:var(--champ);outline:none;border-radius:0;-webkit-appearance:none;transition:.3s}
+  .f input:focus,.f select:focus,.f textarea:focus{border-color:var(--gild)}
+  .f select option{color:#17171D;background:var(--champ)}
+  .f textarea{min-height:84px;resize:vertical}
+  .f2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .contacts{display:flex;justify-content:center;gap:clamp(22px,6vw,60px);flex-wrap:wrap;margin-top:48px;text-align:center}
+  .contacts .nm{font-size:1.28rem;color:var(--champ)}
+  .contacts .rl{display:block;font-family:var(--sans);font-size:.56rem;letter-spacing:.3em;text-transform:uppercase;color:rgba(239,227,200,.4);margin:3px 0 10px}
+  .contacts a{display:inline-flex;width:44px;height:44px;border:1px solid var(--hair);align-items:center;justify-content:center;color:var(--gild);margin:0 4px;transition:.3s;clip-path:polygon(0 8px,8px 0,calc(100% - 8px) 0,100% 8px,100% calc(100% - 8px),calc(100% - 8px) 100%,8px 100%,0 calc(100% - 8px))}
+  .contacts a:hover{background:var(--gild);color:var(--noir)}
+
+  footer{text-align:center;padding:80px 20px 58px;border-top:1px solid var(--hair-dim)}
+  footer .fm{font-family:var(--display);font-size:1.8rem;letter-spacing:.3em;color:var(--gild)}
+  footer .fn{font-style:italic;font-size:1.2rem;color:var(--dim);margin-top:10px}
+  footer .brand{margin-top:36px;font-family:var(--sans);font-size:.56rem;letter-spacing:.34em;text-transform:uppercase;color:rgba(239,227,200,.3)}
+  footer .brand a{color:var(--gild);text-decoration:none}
+
+  @media(max-width:620px){
+    .sect{padding:88px 0}
+    .f2{grid-template-columns:1fr}
+    .dp::before,.dp::after{width:12px}
+  }
+</style>
+<style><%- themeCss %></style>
+</head>
+<body class="theme-<%= t.id %>">
+<% if (preview) { %><div class="pv-ribbon" style="position:fixed;top:18px;left:-52px;z-index:99999;transform:rotate(-35deg);background:#D6B86B;color:#101014;font:600 11px/1 Montserrat,Arial,sans-serif;letter-spacing:.22em;padding:11px 58px;box-shadow:0 4px 16px rgba(0,0,0,.4);pointer-events:none">PREVIEW</div>
+<style>@media(max-width:640px){.pv-ribbon{top:8px;left:-58px;padding:8px 54px;font-size:9px}}</style><% } %>
+
+<header class="hero">
+  <div class="rays"></div>
+  <div class="arch">
+    <svg class="fan" viewBox="0 0 84 44" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M42 42V6M42 42L14 10M42 42l28-32M42 42L4 24M42 42l76-18" transform="translate(-19 0) scale(.78)"/><circle cx="42" cy="42" r="3" fill="currentColor"/></svg>
+    <span class="k">Together with their families</span>
+    <h1 class="hname" style="margin-top:22px"><%= s.groom %></h1>
+    <div class="deco-amp"><span class="ln"></span><b></b><span class="ln"></span></div>
+    <h1 class="hname b"><%= s.bride %></h1>
+    <p class="hsub">request the pleasure of your company at the celebration of their marriage</p>
+    <div class="hdate"><%= s.dateLong %></div>
+  </div>
+</header>
+
+<section class="sect wrap">
+  <div class="shead rv"><span class="k">The Countdown</span><h2>Until the Grand Evening</h2>
+    <div class="diadem"><span class="ln"></span><b></b><span class="ln"></span></div></div>
+  <div class="count rv" id="count" data-when="<%= s.countdownISO %>">
+    <div class="step"><b id="cd-d">—</b><span>Days</span></div>
+    <div class="step"><b id="cd-h">—</b><span>Hours</span></div>
+    <div class="step"><b id="cd-m">—</b><span>Minutes</span></div>
+    <div class="step"><b id="cd-s">—</b><span>Seconds</span></div>
+  </div>
+</section>
+
+<% if ((d.story || []).length) { %>
+<section class="sect wrap" style="padding-top:28px">
+  <div class="shead rv"><span class="k">Act by Act</span><h2>Our Story</h2>
+    <div class="diadem"><span class="ln"></span><b></b><span class="ln"></span></div></div>
+  <div class="panels">
+    <% d.story.forEach(function(it, i){ %>
+    <article class="dp rv">
+      <span class="k">Act <%= ['I','II','III','IV','V','VI','VII','VIII'][i] || (i + 1) %><%= it.label ? ' · ' + it.label : '' %></span>
+      <h3><%= it.title %></h3>
+      <p><%= it.text %></p>
+    </article>
+    <% }) %>
+  </div>
+</section>
+<% } %>
+
+<% if ((d.program || []).length) { %>
+<section class="sect wrap" style="padding-top:28px">
+  <div class="shead rv"><span class="k">The Programme</span><h2>Order of the Evening</h2>
+    <div class="diadem"><span class="ln"></span><b></b><span class="ln"></span></div></div>
+  <div class="bill rv">
+    <% d.program.forEach(function(it){ %>
+    <div class="brow">
+      <time><%= it.time %></time><span class="dots"></span><h4><%= it.title %></h4>
+      <% if (it.text) { %><div class="tx"><p><%= it.text %></p></div><% } %>
+    </div>
+    <% }) %>
+  </div>
+</section>
+<% } %>
+
+<section class="sect wrap" id="venue" style="padding-top:28px">
+  <div class="shead rv"><span class="k">The Address</span><h2>Where We Celebrate</h2>
+    <div class="diadem"><span class="ln"></span><b></b><span class="ln"></span></div></div>
+  <div class="vmarq rv">
+    <div class="ph"><img src="<%= img.venue %>" alt="<%= s.venueName %>" loading="lazy" /></div>
+    <div class="vinfo">
+      <h3><%= s.venueName %></h3>
+      <% if (s.venueAddress) { %><p class="addr"><%= s.venueAddress %></p><% } %>
+      <div class="vfacts">
+        <div><b><%= s.timeDisplay %></b><span>Ceremony</span></div>
+        <div><b><%= s.arriveDisplay %></b><span>Arrive by</span></div>
+        <% if (s.rsvpByDisplay) { %><div><b><%= s.rsvpByDisplay %></b><span>RSVP by</span></div><% } %>
+      </div>
+      <div class="vbtns">
+        <a class="btn solid" href="https://www.google.com/maps/search/?api=1&query=<%= encodeURIComponent(s.mapQuery) %>" target="_blank" rel="noopener">Directions</a>
+        <% if (s.venueWebsite) { %><a class="btn" href="<%= s.venueWebsite %>" target="_blank" rel="noopener">Venue Website</a><% } %>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sect wrap" id="rsvp" style="padding-top:28px">
+  <div class="shead rv"><span class="k">Admission by Reply<% if (s.rsvpByDisplay) { %> · by <%= s.rsvpByDisplay %><% } %></span><h2>Will You Join Us</h2>
+    <div class="diadem"><span class="ln"></span><b></b><span class="ln"></span></div></div>
+  <form class="ticket rv" id="rsvpForm">
+    <div class="f"><label>Your name</label><input id="rName" required placeholder="Your full name" /></div>
+    <div class="f2">
+      <div class="f"><label>Attending</label><select id="rGo"><option>Joyfully accepts</option><option>Regretfully declines</option></select></div>
+      <div class="f"><label>Guests</label><select id="rNum"><option>1</option><option>2</option><option>3</option><option>4</option><option>5+</option></select></div>
+    </div>
+    <div class="f"><label>A note (optional)</label><textarea id="rMsg" placeholder="Wishes, requests, anything at all…"></textarea></div>
+    <button class="btn solid" style="width:100%" type="submit">Send RSVP via WhatsApp</button>
+  </form>
+  <div class="contacts rv">
+    <% (d.contacts || []).forEach(function(c){ if (!c.name && !c.phone) return; %>
+    <div>
+      <span class="nm"><%= c.name %></span><span class="rl"><%= c.role %></span>
+      <% if (c.wa) { %><a href="https://wa.me/<%= String(c.wa).replace(/\D/g,'') %>" target="_blank" rel="noopener" aria-label="WhatsApp"><svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2c-1.5 0-3-.4-4.3-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.6-6.1c-.3-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1-.2.3-.6.8-.8 1-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4 0-.6.1-.8l.4-.5c.1-.2.2-.3.3-.5v-.5c0-.1-.6-1.4-.8-1.9-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.5.1-.7.3-.2.3-.9.9-.9 2.2s.9 2.5 1 2.7a11 11 0 0 0 4.2 3.7c.6.3 1 .4 1.4.6.6.2 1.1.2 1.5.1.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.1-1.2l-.5-.3z"/></svg></a><% } %>
+      <% if (c.phone) { %><a href="tel:<%= c.phone.replace(/\s/g,'') %>" aria-label="Call"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 2 .7 2.9a2 2 0 0 1-.4 2.1L8 10a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.9.6 2.9.7a2 2 0 0 1 1.7 2z"/></svg></a><% } %>
+    </div>
+    <% }) %>
+  </div>
+</section>
+
+<footer>
+  <div class="fm"><%= s.gi %> ◆ <%= s.bi %></div>
+  <div class="fn"><%= s.coupleTitle %> — <%= s.dateMedium %></div>
+  <div class="brand">Crafted with <a href="<%= brandBase %>" target="_blank" rel="noopener">Poruwe</a></div>
+</footer>
+
+<script>
+(function(){
+  'use strict';
+  var io = new IntersectionObserver(function(es){ es.forEach(function(e){ if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }); }, { threshold: .14 });
+  document.querySelectorAll('.rv').forEach(function(el){ io.observe(el); });
+  var when = new Date(document.getElementById('count').dataset.when || 0).getTime();
+  function cd(id, v){ document.getElementById(id).textContent = String(v).padStart(2, '0'); }
+  function tick(){
+    var t = Math.max(0, when - Date.now());
+    cd('cd-d', Math.floor(t / 864e5)); cd('cd-h', Math.floor(t % 864e5 / 36e5));
+    cd('cd-m', Math.floor(t % 36e5 / 6e4)); cd('cd-s', Math.floor(t % 6e4 / 1e3));
+  }
+  if (when) { tick(); setInterval(tick, 1000); }
+  document.getElementById('rsvpForm').addEventListener('submit', function(ev){
+    ev.preventDefault();
+    <% if (preview) { %>
+    alert('This is a preview — the RSVP form starts working the moment the invitation is published.');
+    return;
+    <% } else { %>
+    var name = document.getElementById('rName').value.trim();
+    if (!name) return;
+    var msg = 'RSVP — <%= s.coupleTitle %> (<%= s.dateShort %>)\n'
+      + 'Name: ' + name + '\n'
+      + 'Attending: ' + document.getElementById('rGo').value + '\n'
+      + 'Guests: ' + document.getElementById('rNum').value
+      + (document.getElementById('rMsg').value.trim() ? '\nNote: ' + document.getElementById('rMsg').value.trim() : '');
+    window.open('https://wa.me/<%= s.rsvpWa %>?text=' + encodeURIComponent(msg), '_blank');
+    <% } %>
+  });
+})();
+</script>
+</body>
+</html>
