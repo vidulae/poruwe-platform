@@ -3,6 +3,9 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="icon" href="/public/icons/favicon.svg" type="image/svg+xml" />
+<link rel="icon" href="/public/icons/favicon-32.png" sizes="32x32" type="image/png" />
+<link rel="apple-touch-icon" href="/public/icons/apple-touch-icon.png" />
 <title>Poruwe — Wedding Invitations, Sealed with Love</title>
 <meta name="description" content="Create a luxury wedding invitation in minutes — cinematic invitation websites, printable PDF cards and share-ready images. Made in Sri Lanka. From free to LKR 7,900." />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -99,7 +102,7 @@
   </div>
 </header>
 
-<div class="strip">From <b>FREE</b> to <b>LKR 7,900</b> · websites · printable PDFs · WhatsApp cards · auto-private after your wedding</div>
+<div class="strip">From <b>FREE</b> to <b>LKR 7,900</b> · websites · printable PDFs · WhatsApp cards · pay by bank transfer — <b>PayHere card payments coming soon</b> · auto-private after your wedding</div>
 
 <section class="section" id="templates">
   <div class="container">
@@ -108,16 +111,18 @@
       <h2>Choose your invitation</h2>
     </div>
     <div class="tpl-grid">
-      <% templates.forEach(function(t){ %>
+      <% templates.forEach(function(t){
+        const sampleHref = '/sample/' + t.id + (t.kind === 'pdf' ? '.pdf' : t.kind === 'image' ? '.png' : '');
+      %>
       <div class="tpl-card panel reveal">
-        <div class="tpl-thumb thumb-<%= t.kind %> <%= t.id === 'midnight-poruwa' ? 'dark' : '' %>">
-          <div class="mini-frame">
-            <div class="mini-mono">S &amp; D</div>
-            <div class="mini-names">Sahan<br>&amp; Dilini</div>
-            <div class="mini-line"></div>
-            <div class="mini-date"><%= t.kind === 'website' ? 'TAP TO OPEN' : (t.kind === 'pdf' ? 'PRINTABLE PDF' : 'SHARE-READY') %></div>
+        <a class="tpl-thumb thumb-<%= t.kind %> <%= (t.thumb && t.thumb.dark) || t.id === 'midnight-poruwa' ? 'dark' : '' %>" href="<%= sampleHref %>" target="_blank" rel="noopener" style="text-decoration:none<%= t.thumb && t.thumb.bg ? ';background:' + t.thumb.bg : '' %>">
+          <div class="mini-frame" <%- t.thumb ? `style="border-color:${t.thumb.accent || 'var(--gold)'};${t.thumb.frameBg ? 'background:' + t.thumb.frameBg : ''}"` : '' %>>
+            <div class="mini-mono" <%- t.thumb && t.thumb.accent ? `style="color:${t.thumb.accent}"` : '' %>>S &amp; D</div>
+            <div class="mini-names" <%- t.thumb && t.thumb.ink ? `style="color:${t.thumb.ink}"` : '' %>>Sahan<br>&amp; Dilini</div>
+            <div class="mini-line" <%- t.thumb && t.thumb.accent ? `style="background:${t.thumb.accent}"` : '' %>></div>
+            <div class="mini-date">TAP TO PREVIEW</div>
           </div>
-        </div>
+        </a>
         <div class="tpl-body">
           <div class="tpl-top">
             <span class="tier-badge tier-<%= t.tier %>"><%= t.tier %></span>
@@ -129,7 +134,7 @@
             <span class="price <%= t.price_lkr === 0 ? 'free' : '' %>"><%= formatLKR(t.price_lkr) %></span>
             <a class="btn btn-gold" style="min-height:42px;padding:0 22px" href="/start/<%= t.id %>">Use this</a>
           </div>
-          <% if (t.id === 'golden-seal') { %><a class="demo-link" href="/i/demo" target="_blank" rel="noopener">View live demo →</a><% } %>
+          <a class="demo-link" href="<%= sampleHref %>" target="_blank" rel="noopener">Preview this design →</a>
         </div>
       </div>
       <% }) %>

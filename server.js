@@ -8,7 +8,7 @@ const { derive, formatLKR } = require('./lib/format');
 const { coupleSlug } = require('./lib/slugify');
 const auth = require('./lib/auth');
 const payments = require('./lib/payments');
-const { defaultStory, defaultProgram, defaultContacts } = require('./lib/catalog');
+const { defaultStory, defaultProgram, defaultContacts, sampleData } = require('./lib/catalog');
 const { buildInvitationPdf } = require('./lib/render/pdfcard');
 const { buildInvitationImage } = require('./lib/render/imagecard');
 const { buildReceiptPdf } = require('./lib/render/receipt');
@@ -223,6 +223,27 @@ app.get('/i/:slug', asyncH(async (req, res) => {
 
 app.get('/demo', (req, res) => res.redirect('/i/demo'));
 
+// Live sample of any template, rendered from catalog sample data (no order needed)
+app.get('/sample/:templateId', asyncH(async (req, res) => {
+  const base = req.params.templateId.replace(/\.(pdf|png)$/, '');
+  const asFile = req.params.templateId.endsWith('.pdf') ? 'pdf' : req.params.templateId.endsWith('.png') ? 'png' : null;
+  const tpl = await store.getTemplate(base);
+  if (!tpl || !tpl.active) return res.status(404).render('notfound');
+  const order = { template_id: tpl.id, kind: tpl.kind, data: sampleData(), slug: null, token: 'sample' };
+  if (tpl.kind === 'website' && !asFile) return renderWebsite(req, res, order, { preview: true });
+  if (tpl.kind === 'pdf') {
+    const buf = await buildInvitationPdf(derive(order.data), { preview: true, template: tpl });
+    res.type('application/pdf');
+    return res.send(buf);
+  }
+  if (tpl.kind === 'image') {
+    const buf = await buildInvitationImage(derive(order.data), { preview: true, template: tpl });
+    res.type('image/png');
+    return res.send(buf);
+  }
+  return res.status(404).render('notfound');
+}));
+
 app.get('/status/:token', asyncH(async (req, res) => {
   const order = await store.orderByToken(req.params.token);
   if (!order) return res.status(404).render('notfound');
@@ -230,6 +251,7 @@ app.get('/status/:token', asyncH(async (req, res) => {
   const settings = await store.allSettings();
   res.render('status', {
     order, tpl, formatLKR,
+    bank: settings.bank || {},
     liveUrl: order.slug ? `${baseUrl(req)}/i/${order.slug}` : null,
     statusUrl: `${baseUrl(req)}/status/${order.token}`,
     support: settings.supportWhatsapp || '',
@@ -338,7 +360,11 @@ app.get('/api/orders/:token/checkout', asyncH(async (req, res) => {
   const tpl = await store.getTemplate(order.template_id);
   const settings = await store.allSettings();
   const methods = payments.availableMethods(settings, tpl.price_lkr);
-  const out = { methods, price: tpl.price_lkr, priceDisplay: formatLKR(tpl.price_lkr), currency: 'LKR', bank: settings.bank || {} };
+  const out = {
+    methods, price: tpl.price_lkr, priceDisplay: formatLKR(tpl.price_lkr), currency: 'LKR',
+    bank: settings.bank || {}, supportWa: digits(settings.supportWhatsapp),
+    payhereComingSoon: tpl.price_lkr > 0 && !methods.includes('payhere'),
+  };
   if (methods.includes('payhere')) out.payhere = payments.payhereCheckout(order, tpl, settings, baseUrl(req));
   res.json(out);
 }));
@@ -356,6 +382,10 @@ app.post('/api/orders/:token/submit', asyncH(async (req, res) => {
   const method = str((req.body || {}).method, 20);
   const allowed = payments.availableMethods(settings, tpl.price_lkr);
   if (!allowed.includes(method)) return res.status(400).json({ error: 'bad_method' });
+  // Paid orders are followed up on WhatsApp (bank details, receipt, go-live) — need a number
+  if (tpl.price_lkr > 0 && !digits((order.data.customer || {}).wa)) {
+    return res.status(400).json({ error: 'need_wa', message: 'Add your WhatsApp number (step one) — payment details and your link are sent there.' });
+  }
 
   if (method === 'free') {
     await store.updateOrder(order.id, { payment: { method: 'free', amount: 0, paidAt: new Date().toISOString() } });
@@ -484,6 +514,14 @@ app.post('/api/admin/orders/:id/extend', asyncH(async (req, res) => {
   res.json({ order: updated });
 }));
 
+app.delete('/api/admin/orders/:id', asyncH(async (req, res) => {
+  const order = await store.orderById(req.params.id);
+  if (!order) return res.status(404).json({ error: 'not_found' });
+  if (order.slug === 'demo') return res.status(409).json({ error: 'demo_protected' });
+  await store.deleteOrder(order.id);
+  res.json({ ok: true });
+}));
+
 app.put('/api/admin/orders/:id/data', asyncH(async (req, res) => {
   const order = await store.orderById(req.params.id);
   if (!order) return res.status(404).json({ error: 'not_found' });
@@ -505,7 +543,7 @@ app.get('/api/admin/settings', asyncH(async (req, res) => {
 app.put('/api/admin/settings', asyncH(async (req, res) => {
   const b = req.body || {};
   if (b.bank) await store.putSetting('bank', { accountName: str(b.bank.accountName, 80), bank: str(b.bank.bank, 60), branch: str(b.bank.branch, 60), accountNumber: str(b.bank.accountNumber, 40) });
-  if (b.payhere) await store.putSetting('payhere', { merchantId: str(b.payhere.merchantId, 40), merchantSecret: str(b.payhere.merchantSecret, 120), sandbox: !!b.payhere.sandbox });
+  if (b.payhere) await store.putSetting('payhere', { merchantId: str(b.payhere.merchantId, 40), merchantSecret: str(b.payhere.merchantSecret, 120), sandbox: !!b.payhere.sandbox, enabled: !!b.payhere.enabled });
   if (b.supportWhatsapp != null) await store.putSetting('supportWhatsapp', digits(b.supportWhatsapp));
   if (b.newAdminPassword) await store.putSetting('adminPassword', { value: str(b.newAdminPassword, 200) });
   const s = await store.allSettings();

@@ -3,6 +3,9 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="icon" href="/public/icons/favicon.svg" type="image/svg+xml" />
+<link rel="icon" href="/public/icons/favicon-32.png" sizes="32x32" type="image/png" />
+<link rel="apple-touch-icon" href="/public/icons/apple-touch-icon.png" />
 <title><%= s.groom %> &amp; <%= s.bride %> · <%= s.dateShort %></title>
 <meta name="theme-color" content="#1A2C25" />
 <!-- Link previews intentionally disabled: no description / Open Graph / Twitter meta, so shared links unfurl with no card. -->
@@ -422,6 +425,7 @@
     .tl-icon svg{width:21px;height:21px}
     .field-row{grid-template-columns:1fr;gap:0}
     .section{padding:84px 0}
+    .section.venue{padding:0} /* the venue leads with its full-bleed image — no green band above it */
     header.nav,header.nav.scrolled{padding:16px 24px}
   }
 </style>
@@ -429,7 +433,8 @@
 <style><%- themeCss %></style>
 </head>
 <body class="theme-<%= t.id %>">
-<% if (preview) { %><div style="position:fixed;top:18px;left:-52px;z-index:99999;transform:rotate(-35deg);background:#C8A24B;color:#1A2C25;font:600 11px/1 Montserrat,Arial,sans-serif;letter-spacing:.22em;padding:11px 58px;box-shadow:0 4px 16px rgba(0,0,0,.3);pointer-events:none">PREVIEW</div><% } %>
+<% if (preview) { %><div class="pv-ribbon" style="position:fixed;top:18px;left:-52px;z-index:99999;transform:rotate(-35deg);background:#C8A24B;color:#1A2C25;font:600 11px/1 Montserrat,Arial,sans-serif;letter-spacing:.22em;padding:11px 58px;box-shadow:0 4px 16px rgba(0,0,0,.3);pointer-events:none">PREVIEW</div>
+<style>@media(max-width:640px){.pv-ribbon{top:8px;left:-58px;padding:8px 54px;font-size:9px}header.nav .brand{margin-left:48px}header.nav{padding-left:16px}}</style><% } %>
 
 <!-- ===== OPENING / LANDING COVER ===== -->
 <div id="opening">

@@ -3,6 +3,9 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="icon" href="/public/icons/favicon.svg" type="image/svg+xml" />
+<link rel="icon" href="/public/icons/favicon-32.png" sizes="32x32" type="image/png" />
+<link rel="apple-touch-icon" href="/public/icons/apple-touch-icon.png" />
 <title>Order <%= order.order_no %> · Poruwe</title>
 <meta name="robots" content="noindex" />
 <% if (['draft','pending_payment','pending_verification'].includes(order.status)) { %><meta http-equiv="refresh" content="25" /><% } %>
@@ -33,6 +36,9 @@
   .panelbox{background:var(--ivory);border:1px solid var(--line);border-radius:14px;padding:clamp(22px,5vw,30px);margin-bottom:26px;text-align:left;box-shadow:var(--shadow-sm)}
   .panelbox h3{font-size:1.5rem;margin-bottom:10px}
   .panelbox p{font-size:1rem}
+  .bankline{display:flex;justify-content:space-between;gap:12px;padding:7px 0;font-size:.95rem;flex-wrap:wrap}
+  .bankline span{font-family:var(--sans);font-size:.72rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);padding-top:3px}
+  .bankline b{color:var(--ink);font-family:var(--sans);font-weight:600}
 </style>
 </head>
 <body>
@@ -79,9 +85,38 @@
     </div>
     <p class="note">Live until 3 days after your wedding — then all data is automatically and permanently deleted.</p>
   <% } else if (st === 'pending_verification') { %>
-    <div class="panelbox"><h3>We're verifying your payment</h3>
-      <p>This usually takes a few hours at most. This page refreshes automatically — your link appears here the moment it's approved. You can keep polishing your invitation in the meantime.</p></div>
-    <div class="actions"><a class="btn btn-ghost" href="/b/<%= order.token %>">Keep editing</a></div>
+    <%
+      const pay = order.payment || {};
+      const hasProof = !!(pay.reference || pay.slipImage);
+      const hasBank = bank && bank.accountNumber;
+    %>
+    <div class="panelbox">
+      <h3><%= hasProof ? "We're verifying your payment" : 'Order received — payment is the last step' %></h3>
+      <% if (hasProof) { %>
+        <p>This usually takes a few hours at most. This page refreshes automatically — your link appears here the moment it's approved. You can keep polishing your invitation in the meantime.</p>
+      <% } else { %>
+        <p style="margin-bottom:14px">Your invitation is ready and waiting. To take it live:</p>
+        <ol style="margin:0 0 6px 20px;font-size:1rem;display:flex;flex-direction:column;gap:8px">
+          <li>Transfer <b><%= formatLKR(tpl.price_lkr) %></b><%= hasBank ? ' to the account below' : ' — we\'ll send the bank details on WhatsApp' %></li>
+          <li>Send us the slip on WhatsApp, or attach it to your order</li>
+          <li>We verify and your invitation goes live — you'll see it right here</li>
+        </ol>
+      <% } %>
+      <% if (hasBank) { %>
+        <div style="border-top:1px dashed rgba(198,161,79,.4);margin-top:16px;padding-top:14px">
+          <div class="bankline"><span>Account name</span><b><%= bank.accountName %></b></div>
+          <div class="bankline"><span>Bank</span><b><%= bank.bank %></b></div>
+          <div class="bankline"><span>Branch</span><b><%= bank.branch %></b></div>
+          <div class="bankline"><span>Account number</span><b><%= bank.accountNumber %></b></div>
+        </div>
+      <% } %>
+    </div>
+    <div class="actions">
+      <% if (support) { %>
+        <a class="btn btn-gold" href="https://wa.me/<%= support %>?text=<%= encodeURIComponent('Hi! This is about my Poruwe order ' + order.order_no + ' (' + tpl.name + ', ' + formatLKR(tpl.price_lkr) + ').' + (hasProof ? ' Just checking on the verification status.' : ' Please send me the bank transfer details — I\'ll send the payment slip here once I\'ve transferred.') + ' My order page: ' + statusUrl) %>" target="_blank" rel="noopener"><%= hasProof ? 'Message us on WhatsApp' : (hasBank ? 'Send my slip on WhatsApp' : 'Get bank details on WhatsApp') %></a>
+      <% } %>
+      <a class="btn btn-line" href="/b/<%= order.token %>"><%= hasProof ? 'Keep editing' : 'Add slip / reference to my order' %></a>
+    </div>
   <% } else if (st === 'pending_payment') { %>
     <div class="panelbox"><h3>Payment not completed yet</h3>
       <p>It looks like the online payment wasn't finished. You can return to the builder and try again.</p></div>

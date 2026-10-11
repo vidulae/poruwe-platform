@@ -156,15 +156,22 @@
       ref[path[path.length - 1]] = el.value;
     });
     syncDefaults();
+    // show synced values in the inputs the user is looking at (contacts step holds all three)
+    [['contacts.0.name', d.contacts[0].name], ['contacts.1.name', d.contacts[1].name], ['rsvp.wa', d.rsvp.wa]].forEach(([n, v]) => {
+      const el = document.querySelector(`#steps [name="${n}"]`);
+      if (el && v != null && el.value !== v) el.value = v;
+    });
   }
 
-  // Contact names (and the RSVP number) follow the couple step while still on sample defaults
+  // Contact names (and the RSVP number) follow the couple step while still on sample defaults.
+  // The RSVP number mirrors the groom's WhatsApp until the user edits the RSVP field itself.
+  let rsvpAuto = !d.rsvp.wa || d.rsvp.wa === SAMPLE.groomWa || d.rsvp.wa === (d.contacts[0].wa || '').replace(/\D/g, '');
   function syncDefaults() {
     const g = (d.couple.groom || '').trim(), b = (d.couple.bride || '').trim();
     if (g && g !== SAMPLE.groom && (d.contacts[0].name === SAMPLE.groom || !d.contacts[0].name)) d.contacts[0].name = g;
     if (b && b !== SAMPLE.bride && (d.contacts[1].name === SAMPLE.bride || !d.contacts[1].name)) d.contacts[1].name = b;
-    const gw = (d.contacts[0].wa || '').trim();
-    if (gw && gw !== SAMPLE.groomWa && (d.rsvp.wa === SAMPLE.groomWa || !d.rsvp.wa)) d.rsvp.wa = gw;
+    const gw = (d.contacts[0].wa || '').replace(/\D/g, '');
+    if (gw && gw !== SAMPLE.groomWa && rsvpAuto) d.rsvp.wa = gw;
   }
 
   /* ------------------------- serialized autosave queue ---------------------- */
@@ -329,9 +336,12 @@
     payMethod = payMethod && checkout.methods.includes(payMethod) ? payMethod : checkout.methods[0];
     box.innerHTML = `
       <div class="price-line"><span class="lbl-t">Total</span><span class="amt">${checkout.priceDisplay}</span></div>
-      <div class="method-tabs">${checkout.methods.map((m) => `<div class="mtab ${m === payMethod ? 'sel' : ''}" data-m="${m}">${m === 'manual' ? 'Bank transfer' : 'Card / PayHere'}</div>`).join('')}</div>
+      <div class="method-tabs">
+        ${checkout.methods.map((m) => `<div class="mtab ${m === payMethod ? 'sel' : ''}" data-m="${m}">${m === 'manual' ? 'Bank transfer' : 'Card / PayHere'}</div>`).join('')}
+        ${checkout.payhereComingSoon ? '<div class="mtab soon">Card payments<small>PayHere — coming soon</small></div>' : ''}
+      </div>
       <div id="methodBody"></div>`;
-    box.querySelectorAll('.mtab').forEach((t) => t.onclick = () => { payMethod = t.dataset.m; box.querySelectorAll('.mtab').forEach((x) => x.classList.toggle('sel', x === t)); renderMethod(); });
+    box.querySelectorAll('.mtab[data-m]').forEach((t) => t.onclick = () => { payMethod = t.dataset.m; box.querySelectorAll('.mtab').forEach((x) => x.classList.toggle('sel', x === t)); renderMethod(); });
     renderMethod();
   }
 
@@ -343,23 +353,28 @@
       el.innerHTML = `
         <h4>Bank transfer</h4>
         ${hasBank ? `
+          <p style="margin-bottom:12px">Transfer <b>${checkout.priceDisplay}</b> to this account — now or after submitting. Your order stays editable the whole time.</p>
           <div class="bankrow"><span>Account name</span><b>${esc(b.accountName)}</b></div>
           <div class="bankrow"><span>Bank</span><b>${esc(b.bank)}</b></div>
           <div class="bankrow"><span>Branch</span><b>${esc(b.branch)}</b></div>
           <div class="bankrow" style="border-bottom:none"><span>Account number</span><b>${esc(b.accountNumber)}</b></div>`
-        : '<p style="margin-bottom:10px">Bank details will be shared with you on WhatsApp right after you submit.</p>'}
-        <div class="field" style="margin-top:16px"><label>Transfer reference / your name on the slip</label><input id="payRef" placeholder="e.g. TT-20260831 or your name" value="${esc(payRefVal)}" /></div>
+        : '<p style="margin-bottom:10px">Submit your order first — the bank details and every next step arrive on your WhatsApp right away.</p>'}
+        <div class="field" style="margin-top:16px"><label>Your WhatsApp number</label><input id="payWa" inputmode="numeric" placeholder="9477xxxxxxx" value="${esc(d.customer.wa || '')}" />
+          <div class="hint">Payment details, order updates and your finished link are sent here.</div></div>
+        <div class="field"><label>Transfer reference <span class="opt">optional — add it once you've transferred</span></label><input id="payRef" placeholder="e.g. TT-20261011 or your name" value="${esc(payRefVal)}" /></div>
         <div class="photo-grid" style="grid-template-columns:1fr">
           ${slipId
             ? `<div class="photo-slot" data-photo="slip"><img src="/img/${slipId}" alt="" /><div class="lbl">Payment slip attached ✓</div><input type="file" accept="image/*" hidden /></div>`
-            : `<div class="photo-slot" data-photo="slip"><div class="ph-empty" style="height:64px"><span>Optional: tap to attach the payment slip</span></div><div class="lbl">Payment slip</div><input type="file" accept="image/*" hidden /></div>`}
+            : `<div class="photo-slot" data-photo="slip"><div class="ph-empty" style="height:64px"><span>Tap to attach your payment slip — now or after you transfer</span></div><div class="lbl">Payment slip <span class="opt">optional at this step</span></div><input type="file" accept="image/*" hidden /></div>`}
         </div>
-        <button type="button" class="btn btn-gold" id="payBtn" style="width:100%;margin-top:14px">I have paid — submit for verification</button>
-        <p class="hint" style="margin-top:10px">We verify transfers within a few hours and your invitation goes live immediately after.</p>`;
+        <button type="button" class="btn btn-gold" id="payBtn" style="width:100%;margin-top:14px">${hasBank ? 'Submit order for verification' : 'Submit my order'}</button>
+        <p class="hint" style="margin-top:10px">After submitting: transfer the amount, then add the slip here or send it on WhatsApp. We verify within a few hours and your invitation goes live.</p>`;
       $('#payRef').addEventListener('input', () => { payRefVal = $('#payRef').value; });
+      $('#payWa').addEventListener('input', () => { d.customer.wa = $('#payWa').value.replace(/\D/g, ''); save(); });
       $('#payBtn').onclick = () => {
         payRefVal = $('#payRef').value.trim();
-        if (!payRefVal) return toast('Please add your transfer reference');
+        d.customer.wa = $('#payWa').value.replace(/\D/g, '');
+        if (!d.customer.wa) { $('#payWa').focus(); return toast('Add your WhatsApp number — payment details are sent there'); }
         submit('manual', payRefVal);
       };
     } else if (payMethod === 'payhere') {
@@ -398,6 +413,7 @@
 
   /* --------------------------- delegated event wiring ----------------------- */
   document.addEventListener('input', (e) => {
+    if (e.target.name === 'rsvp.wa') rsvpAuto = false; // the user took over the RSVP number
     if (e.target.closest('#steps') && e.target.name) save();
   });
 

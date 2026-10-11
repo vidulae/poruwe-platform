@@ -3,6 +3,9 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="icon" href="/public/icons/favicon.svg" type="image/svg+xml" />
+<link rel="icon" href="/public/icons/favicon-32.png" sizes="32x32" type="image/png" />
+<link rel="apple-touch-icon" href="/public/icons/apple-touch-icon.png" />
 <title>Build your invitation · Poruwe</title>
 <meta name="robots" content="noindex" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -73,6 +76,11 @@
   .method-tabs{display:flex;gap:10px;margin-bottom:18px;flex-wrap:wrap}
   .mtab{flex:1;min-width:min(150px,100%);border:1.5px solid var(--line);background:var(--ivory);border-radius:10px;padding:14px;text-align:center;cursor:pointer;font-family:var(--sans);font-size:.76rem;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);transition:.3s}
   .mtab.sel{border-color:var(--gold);color:var(--ink);background:#fff;font-weight:600;box-shadow:0 0 0 3px rgba(198,161,79,.15)}
+  .mtab.soon{border-style:dashed;cursor:default;opacity:.75}
+  .mtab.soon small{display:block;margin-top:4px;font-size:.6rem;letter-spacing:.14em;color:var(--gold-deep);text-transform:uppercase}
+  .field .opt{font-weight:400;text-transform:none;letter-spacing:0;color:var(--muted);font-size:.72rem}
+  .paybox .btn{white-space:normal;height:auto;min-height:52px;padding:14px 20px;line-height:1.4;letter-spacing:.1em}
+  #toast{bottom:86px}
   .savebar{position:fixed;bottom:0;left:0;right:0;background:rgba(247,244,238,.95);backdrop-filter:blur(12px);border-top:1px solid var(--line);padding:12px 18px;display:flex;justify-content:space-between;align-items:center;gap:10px;z-index:40}
   .savebar .st{font-family:var(--sans);font-size:.72rem;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 </style>
@@ -137,6 +145,6 @@
     localStorage.setItem(K, JSON.stringify(list.slice(0, 5)));
   } catch (e) {}
 </script>
-<script src="/public/builder.js?v=4"></script>
+<script src="/public/builder.js?v=5"></script>
 </body>
 </html>
