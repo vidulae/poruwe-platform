@@ -180,7 +180,7 @@ app.get('/start/:templateId', asyncH(async (req, res) => {
 app.get('/b/:token', asyncH(async (req, res) => {
   const order = await store.orderByToken(req.params.token);
   if (!order) return res.status(404).render('notfound');
-  if (['active', 'expired', 'revoked'].includes(order.status)) return res.redirect(`/status/${order.token}`);
+  if (['expired', 'revoked'].includes(order.status)) return res.redirect(`/status/${order.token}`);
   const tpl = await store.getTemplate(order.template_id);
   res.render('builder', { order, tpl, formatLKR });
 }));
@@ -288,13 +288,25 @@ app.get('/api/orders/:token', asyncH(async (req, res) => {
 app.put('/api/orders/:token', asyncH(async (req, res) => {
   const order = await store.orderByToken(req.params.token);
   if (!order) return res.status(404).json({ error: 'not_found' });
-  if (!['draft', 'pending_payment'].includes(order.status)) return res.status(409).json({ error: 'locked' });
+  if (!['draft', 'pending_payment', 'pending_verification', 'rejected', 'active'].includes(order.status)) {
+    return res.status(409).json({ error: 'locked' });
+  }
   const incoming = sanitizeData(req.body && req.body.data);
   // preserve photo ids already uploaded unless explicitly replaced
   for (const k of ['groom', 'bride', 'venue', 'card']) {
     if (!incoming.photos[k] && order.data.photos && order.data.photos[k]) incoming.photos[k] = order.data.photos[k];
   }
-  const updated = await store.updateOrder(order.id, { data: incoming });
+  const patch = { data: incoming };
+  if (order.status === 'active' && incoming.event && incoming.event.date) {
+    // live edits may move the wedding — expiry follows the new date
+    const prev = order.wedding_date ? new Date(order.wedding_date).toISOString().slice(0, 10) : null;
+    if (incoming.event.date !== prev) {
+      patch.wedding_date = incoming.event.date;
+      patch.expires_at = derive(incoming).expiresAt;
+      await store.audit(order.id, 'edited_live_date', { from: prev, to: incoming.event.date });
+    }
+  }
+  const updated = await store.updateOrder(order.id, patch);
   res.json(publicOrder(updated, req));
 }));
 
@@ -302,7 +314,7 @@ const IMG_KINDS = ['groom', 'bride', 'venue', 'card', 'slip'];
 app.post('/api/orders/:token/image', asyncH(async (req, res) => {
   const order = await store.orderByToken(req.params.token);
   if (!order) return res.status(404).json({ error: 'not_found' });
-  if (!['draft', 'pending_payment', 'pending_verification'].includes(order.status)) return res.status(409).json({ error: 'locked' });
+  if (!['draft', 'pending_payment', 'pending_verification', 'rejected', 'active'].includes(order.status)) return res.status(409).json({ error: 'locked' });
   const { kind, dataUrl } = req.body || {};
   if (!IMG_KINDS.includes(kind)) return res.status(400).json({ error: 'bad_kind' });
   const m = /^data:(image\/(?:jpeg|png|webp));base64,([A-Za-z0-9+/=]+)$/.exec(String(dataUrl || ''));
@@ -334,7 +346,7 @@ app.get('/api/orders/:token/checkout', asyncH(async (req, res) => {
 app.post('/api/orders/:token/submit', asyncH(async (req, res) => {
   let order = await store.orderByToken(req.params.token);
   if (!order) return res.status(404).json({ error: 'not_found' });
-  if (!['draft', 'pending_payment'].includes(order.status)) return res.status(409).json({ error: 'locked' });
+  if (!['draft', 'pending_payment', 'rejected'].includes(order.status)) return res.status(409).json({ error: 'locked' });
   const tpl = await store.getTemplate(order.template_id);
   const settings = await store.allSettings();
   const d = derive(order.data);

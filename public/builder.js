@@ -15,10 +15,12 @@
   const SAMPLE = { groom: 'Sahan', bride: 'Dilini', groomWa: '94770000001', brideWa: '94760000002' };
 
   const isWebsite = O.kind === 'website';
+  const isLive = O.status === 'active'; // published orders: same wizard, edits go straight to the live invitation
+  const finalStep = isLive ? 'live' : 'review';
   const STEPS = isWebsite
-    ? ['couple', 'event', 'venue', 'story', 'program', 'contacts', 'photos', 'review']
-    : (O.kind === 'image' ? ['couple', 'event', 'venue', 'rsvp', 'photo', 'review'] : ['couple', 'event', 'venue', 'rsvp', 'review']);
-  const LABELS = { couple: 'Couple', event: 'Date & Time', venue: 'Venue', story: 'Your Story', program: 'The Day', contacts: 'Contacts', photos: 'Photos', rsvp: 'RSVP', photo: 'Photo', review: 'Review & Pay' };
+    ? ['couple', 'event', 'venue', 'story', 'program', 'contacts', 'photos', finalStep]
+    : (O.kind === 'image' ? ['couple', 'event', 'venue', 'rsvp', 'photo', finalStep] : ['couple', 'event', 'venue', 'rsvp', finalStep]);
+  const LABELS = { couple: 'Couple', event: 'Date & Time', venue: 'Venue', story: 'Your Story', program: 'The Day', contacts: 'Contacts', photos: 'Photos', rsvp: 'RSVP', photo: 'Photo', review: 'Review & Pay', live: 'Live' };
   const CROP_ASPECT = { groom: 1, bride: 1, card: 1, venue: 1.6 }; // slip is never cropped
   let cur = 0;
   let checkout = null;
@@ -80,6 +82,19 @@
         <button type="button" class="btn btn-line" id="bigPreview">Open full preview</button>
       </div>
       <div class="paybox" id="paybox"><h4>Loading payment options…</h4></div>`;
+    if (step === 'live') return `
+      <h2>Your invitation is live</h2><p class="sub">Everything you change here is saved automatically and appears on your invitation straight away — no need to pay again.</p>
+      <div class="summary" id="summary"></div>
+      <div class="paybox">
+        <h4>Your live invitation</h4>
+        ${isWebsite && O.slug ? `<p style="margin-bottom:14px;word-break:break-all"><a href="/i/${esc(O.slug)}" target="_blank" rel="noopener">${esc(location.origin + '/i/' + O.slug)}</a></p>` : ''}
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          ${isWebsite && O.slug ? `<button type="button" class="btn btn-gold" id="openLive">Open live invitation</button>` : ''}
+          ${O.kind === 'pdf' ? `<a class="btn btn-gold" href="/d/${O.token}/invitation.pdf">Download fresh PDF</a>` : ''}
+          ${O.kind === 'image' ? `<a class="btn btn-gold" href="/d/${O.token}/card.png">Download fresh image</a>` : ''}
+          <a class="btn btn-line" href="/status/${O.token}">Order status</a>
+        </div>
+      </div>`;
     return '';
   }
 
@@ -112,8 +127,9 @@
     if (STEPS[cur] === 'story') $('#storyRows').innerHTML = rowsHtml('story');
     if (STEPS[cur] === 'program') $('#programRows').innerHTML = rowsHtml('program');
     if (STEPS[cur] === 'review') { renderSummary(); loadCheckout(); }
+    if (STEPS[cur] === 'live') renderSummary();
     $('#backBtn').style.visibility = cur === 0 ? 'hidden' : 'visible';
-    $('#nextBtn').style.display = STEPS[cur] === 'review' ? 'none' : '';
+    $('#nextBtn').style.display = ['review', 'live'].includes(STEPS[cur]) ? 'none' : '';
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
@@ -158,7 +174,7 @@
     saving = true;
     $('#saveState').textContent = 'Saving…';
     return fetch(`/api/orders/${O.token}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ data: d }) })
-      .then((r) => { if (!r.ok) throw new Error(); $('#saveState').textContent = 'Draft saved automatically'; })
+      .then((r) => { if (!r.ok) throw new Error(); $('#saveState').textContent = isLive ? 'Saved — your live invitation is updated' : 'Draft saved automatically'; })
       .catch(() => { $('#saveState').textContent = 'Save failed — check connection'; })
       .finally(() => {
         saving = false;
@@ -416,6 +432,7 @@
       return;
     }
     if (e.target.closest('#bigPreview')) { save(true).then(() => window.open(`/p/${O.token}`, '_blank')); }
+    if (e.target.closest('#openLive')) { save(true).then(() => window.open(`/i/${O.slug}`, '_blank')); }
   });
 
   document.addEventListener('change', (e) => {
@@ -429,7 +446,8 @@
 
   $('#backBtn').onclick = () => { collect(); save(); if (cur > 0) { cur--; render(); } };
   $('#nextBtn').onclick = () => { collect(); save(); if (cur < STEPS.length - 1) { cur++; render(); } };
-  $('#previewBtn').onclick = async () => { await save(true); window.open(`/p/${O.token}`, '_blank'); };
+  $('#previewBtn').onclick = async () => { await save(true); window.open(isLive && isWebsite && O.slug ? `/i/${O.slug}` : `/p/${O.token}`, '_blank'); };
 
+  if (isLive) $('#previewBtn').textContent = 'View live';
   render();
 })();

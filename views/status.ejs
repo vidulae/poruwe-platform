@@ -64,6 +64,7 @@
         <div class="actions">
           <button class="btn btn-gold" onclick="navigator.clipboard.writeText('<%= liveUrl %>').then(()=>this.textContent='Copied ✓')">Copy link</button>
           <a class="btn btn-line" style="border-color:var(--gold-light);color:var(--gold-light)" href="https://wa.me/?text=<%= encodeURIComponent('You are warmly invited! 💍 ' + liveUrl) %>" target="_blank" rel="noopener">Share on WhatsApp</a>
+          <a class="btn btn-line" style="border-color:var(--gold-light);color:var(--gold-light)" href="/b/<%= order.token %>">Edit invitation</a>
         </div>
       <% } else if (order.kind === 'pdf') { %>
         <p style="margin-bottom:18px">Your printable invitation is ready.</p>
@@ -72,11 +73,15 @@
         <p style="margin-bottom:18px">Your invitation image is ready.</p>
         <div class="actions"><a class="btn btn-gold" href="/d/<%= order.token %>/card.png">Download image</a></div>
       <% } %>
+      <% if (order.kind !== 'website') { %>
+        <div class="actions"><a class="btn btn-line" style="border-color:var(--gold-light);color:var(--gold-light)" href="/b/<%= order.token %>">Edit & regenerate</a></div>
+      <% } %>
     </div>
     <p class="note">Live until 3 days after your wedding — then all data is automatically and permanently deleted.</p>
   <% } else if (st === 'pending_verification') { %>
     <div class="panelbox"><h3>We're verifying your payment</h3>
-      <p>This usually takes a few hours at most. This page refreshes automatically — your link appears here the moment it's approved.</p></div>
+      <p>This usually takes a few hours at most. This page refreshes automatically — your link appears here the moment it's approved. You can keep polishing your invitation in the meantime.</p></div>
+    <div class="actions"><a class="btn btn-ghost" href="/b/<%= order.token %>">Keep editing</a></div>
   <% } else if (st === 'pending_payment') { %>
     <div class="panelbox"><h3>Payment not completed yet</h3>
       <p>It looks like the online payment wasn't finished. You can return to the builder and try again.</p></div>

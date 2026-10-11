@@ -87,8 +87,8 @@
 <div class="bwrap">
   <div class="bhead">
     <div>
-      <span class="eyebrow">Invitation builder</span>
-      <h1>Let's craft your invitation</h1>
+      <span class="eyebrow"><%= order.status === 'active' ? 'Live invitation' : 'Invitation builder' %></span>
+      <h1><%= order.status === 'active' ? 'Edit your live invitation' : "Let's craft your invitation" %></h1>
     </div>
     <div class="tpl">Template<br><b><%= tpl.name %></b> · <%= formatLKR(tpl.price_lkr) %></div>
   </div>
@@ -105,7 +105,7 @@
   </div>
 </div>
 
-<div class="savebar"><span class="st" id="saveState">Draft saved automatically</span><span class="st">Order <b style="color:var(--gold-deep)"><%= order.order_no %></b></span></div>
+<div class="savebar"><span class="st" id="saveState"><%= order.status === 'active' ? 'Live — edits appear on your invitation instantly' : 'Draft saved automatically' %></span><span class="st">Order <b style="color:var(--gold-deep)"><%= order.order_no %></b></span></div>
 <div id="toast"></div>
 
 <!-- photo crop modal -->
@@ -127,7 +127,7 @@
 </div>
 
 <script>
-  window.ORDER = <%- JSON.stringify({ token: order.token, orderNo: order.order_no, kind: order.kind, status: order.status, data: order.data }) %>;
+  window.ORDER = <%- JSON.stringify({ token: order.token, orderNo: order.order_no, kind: order.kind, status: order.status, slug: order.slug || null, data: order.data }) %>;
   window.TPL = <%- JSON.stringify({ id: tpl.id, name: tpl.name, kind: tpl.kind, price: tpl.price_lkr, priceDisplay: formatLKR(tpl.price_lkr) }) %>;
   // Remember this draft on this device so the landing page can bring the user back
   try {
@@ -137,6 +137,6 @@
     localStorage.setItem(K, JSON.stringify(list.slice(0, 5)));
   } catch (e) {}
 </script>
-<script src="/public/builder.js?v=3"></script>
+<script src="/public/builder.js?v=4"></script>
 </body>
 </html>
