@@ -17,6 +17,19 @@ CREATE TABLE IF NOT EXISTS templates (
   sort      INTEGER NOT NULL DEFAULT 0,
   active    BOOLEAN NOT NULL DEFAULT TRUE
 );
+ALTER TABLE templates ADD COLUMN IF NOT EXISTS discount_lkr INTEGER; -- NULL/0 = no discount
+
+CREATE TABLE IF NOT EXISTS testimonials (
+  id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  order_id    UUID UNIQUE REFERENCES orders(id) ON DELETE CASCADE,
+  template_id TEXT,
+  author      TEXT NOT NULL,
+  couple      TEXT,
+  rating      INTEGER NOT NULL CHECK (rating BETWEEN 1 AND 5),
+  text        TEXT NOT NULL,
+  visible     BOOLEAN NOT NULL DEFAULT FALSE,
+  created_at  TIMESTAMPTZ NOT NULL DEFAULT now()
+);
 
 CREATE SEQUENCE IF NOT EXISTS order_no_seq START 1000;
 

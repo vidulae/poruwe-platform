@@ -73,6 +73,14 @@
   .bed h3{font-style:italic;font-weight:400;font-size:clamp(1.5rem,4vw,2rem);color:var(--ink);margin:8px 0 10px}
   .bed p{color:var(--soft);font-size:1.02rem}
 
+  /* garden portraits */
+  .pduo{display:flex;justify-content:center;gap:clamp(22px,5vw,56px);flex-wrap:wrap}
+  .parch{text-align:center}
+  .parch .ar{width:clamp(150px,38vw,210px);aspect-ratio:.8;border-radius:200px 200px 16px 16px;overflow:hidden;border:1px solid var(--line);padding:8px;background:var(--card);box-shadow:0 22px 50px -30px rgba(93,107,85,.5)}
+  .parch img{width:100%;height:100%;object-fit:cover;border-radius:190px 190px 10px 10px}
+  .parch .pn{font-style:italic;font-size:1.4rem;color:var(--ink);margin-top:14px}
+  .parch .pr{font-family:var(--sans);font-size:.56rem;font-weight:600;letter-spacing:.28em;text-transform:uppercase;color:var(--leaf-deep)}
+
   /* programme petals */
   .pro{max-width:640px;margin:0 auto}
   .prow{display:flex;gap:18px;padding:20px 2px;border-bottom:1px dashed var(--line);align-items:baseline}
@@ -171,6 +179,17 @@
       <p><%= it.text %></p>
     </article>
     <% }) %>
+  </div>
+</section>
+<% } %>
+
+<% if (img.groom || img.bride) { %>
+<section class="sect wrap" style="padding-top:26px">
+  <div class="shead rv"><span class="k">Hand in Hand</span><h2>The Two of Us</h2>
+    <div class="vine"><span class="ln"></span><span class="petal">✿</span><span class="ln"></span></div></div>
+  <div class="pduo rv">
+    <% if (img.groom) { %><div class="parch"><div class="ar"><img src="<%= img.groom %>" alt="<%= s.groom %>" loading="lazy" /></div><div class="pn"><%= s.groom %></div><div class="pr">The Groom</div></div><% } %>
+    <% if (img.bride) { %><div class="parch"><div class="ar"><img src="<%= img.bride %>" alt="<%= s.bride %>" loading="lazy" /></div><div class="pn"><%= s.bride %></div><div class="pr">The Bride</div></div><% } %>
   </div>
 </section>
 <% } %>

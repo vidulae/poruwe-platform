@@ -84,6 +84,46 @@
       <% } %>
     </div>
     <p class="note">Live until 3 days after your wedding — then all data is automatically and permanently deleted.</p>
+
+    <div class="panelbox" id="reviewBox" style="margin-top:26px">
+      <h3 style="font-size:1.3rem"><%= review ? 'Thank you for your review!' : 'Loved your invitation?' %></h3>
+      <% if (review) { %>
+        <div id="rvShown">
+          <p style="color:var(--gold-deep);letter-spacing:3px;font-size:1rem;margin-bottom:6px"><%= '★'.repeat(review.rating) %><span style="opacity:.3"><%= '★'.repeat(5 - review.rating) %></span></p>
+          <p style="font-style:italic">“<%= review.text %>” — <b><%= review.author %></b></p>
+          <p class="hint" style="margin-top:10px"><%= review.visible ? 'Your words are featured on our page — thank you!' : 'We review every note before it appears on our page.' %>
+            <a href="#" id="rvEdit" style="color:var(--gold-deep)">Edit review</a></p>
+        </div>
+      <% } %>
+      <form id="rvForm" style="<%= review ? 'display:none' : '' %>">
+        <p style="font-size:.95rem;margin-bottom:14px">A line from you helps other couples choose — and means the world to us.</p>
+        <div class="rv-stars" id="rvStars" style="font-size:1.7rem;letter-spacing:8px;color:var(--gold);cursor:pointer;user-select:none;margin-bottom:12px" data-val="5">★★★★★</div>
+        <input id="rvName" placeholder="Your name" value="<%= review ? review.author : ((order.data.customer && order.data.customer.name) || '') %>" style="width:100%;border:1px solid var(--line);border-radius:8px;padding:12px 14px;font-family:var(--serif);font-size:1rem;margin-bottom:10px;background:var(--cream)" />
+        <textarea id="rvText" placeholder="What did you and your guests love?" style="width:100%;min-height:84px;border:1px solid var(--line);border-radius:8px;padding:12px 14px;font-family:var(--serif);font-size:1rem;margin-bottom:12px;background:var(--cream);resize:vertical"><%= review ? review.text : '' %></textarea>
+        <button class="btn btn-gold" type="submit" style="width:100%">Send my review</button>
+      </form>
+    </div>
+    <script>
+      (function () {
+        var stars = document.getElementById('rvStars');
+        function paint(v) { stars.textContent = '★★★★★'.slice(0, v) + '☆☆☆☆☆'.slice(0, 5 - v); stars.dataset.val = v; }
+        paint(<%= review ? review.rating : 5 %>);
+        stars.addEventListener('click', function (e) {
+          var rect = stars.getBoundingClientRect();
+          paint(Math.min(5, Math.max(1, Math.ceil(((e.clientX - rect.left) / rect.width) * 5))));
+        });
+        var edit = document.getElementById('rvEdit');
+        if (edit) edit.onclick = function (e) { e.preventDefault(); document.getElementById('rvShown').style.display = 'none'; document.getElementById('rvForm').style.display = ''; };
+        document.getElementById('rvForm').addEventListener('submit', function (e) {
+          e.preventDefault();
+          fetch('/api/orders/<%= order.token %>/review', {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ author: document.getElementById('rvName').value.trim(), rating: +stars.dataset.val, text: document.getElementById('rvText').value.trim() }),
+          }).then(function (r) { return r.json().then(function (j) { if (!r.ok) throw new Error(j.message || 'Could not send'); location.reload(); }); })
+            .catch(function (err) { alert(err.message); });
+        });
+      })();
+    </script>
   <% } else if (st === 'pending_verification') { %>
     <%
       const pay = order.payment || {};

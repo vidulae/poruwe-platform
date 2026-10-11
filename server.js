@@ -20,6 +20,9 @@ const STOCK = {
   hero: 'https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1950&q=80',
   venue: 'https://images.unsplash.com/photo-1571896349842-33c89424de2d?auto=format&fit=crop&w=1600&q=80',
   rsvp: 'https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?auto=format&fit=crop&w=1950&q=80',
+  // sample pages only — so template previews show the portrait sections
+  groomSample: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=900&q=80',
+  brideSample: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=900&q=80',
 };
 
 const app = express();
@@ -46,6 +49,8 @@ let store;
 
 /* --------------------------------- helpers --------------------------------- */
 const baseUrl = (req) => process.env.PUBLIC_BASE_URL || `${req.protocol}://${req.get('host')}`;
+// A discount set in the admin panel wins while it undercuts the list price
+const priceOf = (tpl) => (tpl.discount_lkr && tpl.discount_lkr > 0 && tpl.discount_lkr < tpl.price_lkr) ? tpl.discount_lkr : tpl.price_lkr;
 const asyncH = (fn) => (req, res, next) => Promise.resolve(fn(req, res, next)).catch(next);
 
 function str(v, max = 300) { return typeof v === 'string' ? v.trim().slice(0, max) : ''; }
@@ -125,7 +130,7 @@ async function imgUrlFor(order, kind, fallback) {
   return id ? `/img/${id}` : (fallback || null);
 }
 
-async function renderWebsite(req, res, order, { preview = false } = {}) {
+async function renderWebsite(req, res, order, { preview = false, stockPortraits = false } = {}) {
   const tpl = await store.getTemplate(order.template_id);
   const d = order.data;
   const s = derive(d);
@@ -136,8 +141,8 @@ async function renderWebsite(req, res, order, { preview = false } = {}) {
   res.render(`templates/${tpl.renderer}`, {
     t: tpl, d, s, preview, themeCss,
     img: {
-      groom: await imgUrlFor(order, 'groom'),
-      bride: await imgUrlFor(order, 'bride'),
+      groom: await imgUrlFor(order, 'groom', stockPortraits ? STOCK.groomSample : null),
+      bride: await imgUrlFor(order, 'bride', stockPortraits ? STOCK.brideSample : null),
       venue: await imgUrlFor(order, 'venue', STOCK.venue),
       hero: STOCK.hero, rsvpBg: STOCK.rsvp,
     },
@@ -158,10 +163,18 @@ app.get('/healthz', (req, res) => res.json({ ok: true }));
 
 app.get('/', asyncH(async (req, res) => {
   const templates = await store.listTemplates(true);
-  // card art (thumb) is design data that lives in the catalog, not the DB
-  const art = Object.fromEntries(TEMPLATES.map((t) => [t.id, t.thumb]));
-  for (const t of templates) t.thumb = art[t.id];
-  res.render('landing', { templates, formatLKR });
+  // card art (thumb) and seed social proof are design data from the catalog, not the DB
+  const meta = Object.fromEntries(TEMPLATES.map((t) => [t.id, t]));
+  const sales = await store.templateSales();
+  for (const t of templates) {
+    t.thumb = (meta[t.id] || {}).thumb;
+    t.sold = ((meta[t.id] || {}).seedSold || 0) + (sales[t.id] || 0);
+    t.eff = priceOf(t);
+  }
+  const favourite = templates.reduce((a, b) =>
+    (!a || b.sold > a.sold || (b.sold === a.sold && b.price_lkr > a.price_lkr)) ? b : a, null);
+  const testimonials = await store.visibleTestimonials(9);
+  res.render('landing', { templates, formatLKR, favouriteId: favourite && favourite.id, testimonials });
 }));
 
 const createLimiter = new Map(); // ip -> {count, resetAt}
@@ -185,7 +198,7 @@ app.get('/b/:token', asyncH(async (req, res) => {
   if (!order) return res.status(404).render('notfound');
   if (['expired', 'revoked'].includes(order.status)) return res.redirect(`/status/${order.token}`);
   const tpl = await store.getTemplate(order.template_id);
-  res.render('builder', { order, tpl, formatLKR });
+  res.render('builder', { order, tpl, effPrice: priceOf(tpl), formatLKR });
 }));
 
 const PREVIEW_TTL_H = +(process.env.PREVIEW_TTL_HOURS || 72);
@@ -234,7 +247,7 @@ app.get('/sample/:templateId', asyncH(async (req, res) => {
   const tpl = await store.getTemplate(base);
   if (!tpl || !tpl.active) return res.status(404).render('notfound');
   const order = { template_id: tpl.id, kind: tpl.kind, data: sampleData(), slug: null, token: 'sample' };
-  if (tpl.kind === 'website' && !asFile) return renderWebsite(req, res, order, { preview: true });
+  if (tpl.kind === 'website' && !asFile) return renderWebsite(req, res, order, { preview: true, stockPortraits: true });
   if (tpl.kind === 'pdf') {
     const buf = await buildInvitationPdf(derive(order.data), { preview: true, template: tpl });
     res.type('application/pdf');
@@ -255,6 +268,7 @@ app.get('/status/:token', asyncH(async (req, res) => {
   const settings = await store.allSettings();
   res.render('status', {
     order, tpl, formatLKR,
+    review: await store.testimonialForOrder(order.id),
     bank: settings.bank || {},
     liveUrl: order.slug ? `${baseUrl(req)}/i/${order.slug}` : null,
     statusUrl: `${baseUrl(req)}/status/${order.token}`,
@@ -295,6 +309,23 @@ app.get('/d/:token/card.png', asyncH(async (req, res) => {
   const buf = await buildInvitationImage(derive(order.data), await cardPhotoDataUri(order), { preview: false, template: await store.getTemplate(order.template_id) });
   res.type('image/png').setHeader('Content-Disposition', 'attachment; filename="wedding-invitation.png"');
   res.send(buf);
+}));
+
+// A couple can leave one review once their invitation is live (or after the wedding)
+app.post('/api/orders/:token/review', asyncH(async (req, res) => {
+  const order = await store.orderByToken(req.params.token);
+  if (!order) return res.status(404).json({ error: 'not_found' });
+  if (!['active', 'expired'].includes(order.status)) return res.status(409).json({ error: 'not_live_yet' });
+  const b = req.body || {};
+  const rating = Math.min(5, Math.max(1, Math.round(+b.rating || 0)));
+  const text = str(b.text, 600);
+  const author = str(b.author, 60);
+  if (!rating || !text || !author) return res.status(400).json({ error: 'incomplete', message: 'Name, stars and a few words are needed.' });
+  const c = (order.data && order.data.couple) || {};
+  const couple = c.groom && c.bride ? `${c.groom} & ${c.bride}` : null;
+  const row = await store.upsertTestimonial(order.id, { template_id: order.template_id, author, couple, rating, text });
+  await store.audit(order.id, 'review_submitted', { rating });
+  res.json({ ok: true, review: { author: row.author, rating: row.rating, text: row.text, visible: row.visible } });
 }));
 
 app.get('/img/:id', asyncH(async (req, res) => {
@@ -363,11 +394,14 @@ app.get('/api/orders/:token/checkout', asyncH(async (req, res) => {
   if (!order) return res.status(404).json({ error: 'not_found' });
   const tpl = await store.getTemplate(order.template_id);
   const settings = await store.allSettings();
-  const methods = payments.availableMethods(settings, tpl.price_lkr);
+  const eff = priceOf(tpl);
+  const methods = payments.availableMethods(settings, eff);
   const out = {
-    methods, price: tpl.price_lkr, priceDisplay: formatLKR(tpl.price_lkr), currency: 'LKR',
+    methods, price: eff, priceDisplay: formatLKR(eff), currency: 'LKR',
+    listPrice: tpl.price_lkr, listPriceDisplay: formatLKR(tpl.price_lkr),
+    discounted: eff < tpl.price_lkr, savePct: eff < tpl.price_lkr ? Math.round((1 - eff / tpl.price_lkr) * 100) : 0,
     bank: settings.bank || {}, supportWa: digits(settings.supportWhatsapp),
-    payhereComingSoon: tpl.price_lkr > 0 && !methods.includes('payhere'),
+    payhereComingSoon: eff > 0 && !methods.includes('payhere'),
   };
   if (methods.includes('payhere')) out.payhere = payments.payhereCheckout(order, tpl, settings, baseUrl(req));
   res.json(out);
@@ -383,11 +417,12 @@ app.post('/api/orders/:token/submit', asyncH(async (req, res) => {
   if (!d.groom || !d.bride || !order.data.event || !order.data.event.date) {
     return res.status(400).json({ error: 'incomplete', message: 'Couple names and wedding date are required.' });
   }
+  const effPrice = priceOf(tpl);
   const method = str((req.body || {}).method, 20);
-  const allowed = payments.availableMethods(settings, tpl.price_lkr);
+  const allowed = payments.availableMethods(settings, effPrice);
   if (!allowed.includes(method)) return res.status(400).json({ error: 'bad_method' });
   // Paid orders are followed up on WhatsApp (bank details, receipt, go-live) — need a number
-  if (tpl.price_lkr > 0 && !digits((order.data.customer || {}).wa)) {
+  if (effPrice > 0 && !digits((order.data.customer || {}).wa)) {
     return res.status(400).json({ error: 'need_wa', message: 'Add your WhatsApp number (step one) — payment details and your link are sent there.' });
   }
 
@@ -399,16 +434,16 @@ app.post('/api/orders/:token/submit', asyncH(async (req, res) => {
   }
   if (method === 'manual') {
     const reference = str((req.body || {}).reference, 80);
-    const payment = { ...(order.payment || {}), method: 'manual', amount: tpl.price_lkr, reference, submittedAt: new Date().toISOString() };
+    const payment = { ...(order.payment || {}), method: 'manual', amount: effPrice, reference, submittedAt: new Date().toISOString() };
     const updated = await store.updateOrder(order.id, { status: 'pending_verification', payment });
     await store.audit(order.id, 'payment_submitted', { method, reference });
     return res.json(publicOrder(updated, req));
   }
   if (method === 'payhere') {
-    const payment = { ...(order.payment || {}), method: 'payhere', amount: tpl.price_lkr };
+    const payment = { ...(order.payment || {}), method: 'payhere', amount: effPrice };
     await store.updateOrder(order.id, { status: 'pending_payment', payment });
     await store.audit(order.id, 'payhere_checkout_started', {});
-    return res.json({ checkout: payments.payhereCheckout(order, tpl, settings, baseUrl(req)) });
+    return res.json({ checkout: payments.payhereCheckout(order, { ...tpl, price_lkr: effPrice }, settings, baseUrl(req)) });
   }
   res.status(400).json({ error: 'bad_method' });
 }));
@@ -536,6 +571,17 @@ app.put('/api/admin/orders/:id/data', asyncH(async (req, res) => {
   const updated = await store.updateOrder(order.id, { data: incoming });
   await store.audit(order.id, 'admin_edited', {});
   res.json({ order: updated });
+}));
+
+app.get('/api/admin/testimonials', asyncH(async (req, res) => res.json(await store.listTestimonials())));
+app.put('/api/admin/testimonials/:id', asyncH(async (req, res) => {
+  const row = await store.setTestimonialVisible(req.params.id, (req.body || {}).visible);
+  if (!row) return res.status(404).json({ error: 'not_found' });
+  res.json(row);
+}));
+app.delete('/api/admin/testimonials/:id', asyncH(async (req, res) => {
+  await store.deleteTestimonial(req.params.id);
+  res.json({ ok: true });
 }));
 
 app.get('/api/admin/settings', asyncH(async (req, res) => {

@@ -51,6 +51,23 @@
   .tpl-body .tag{font-family:var(--serif);font-size:1.12rem;color:var(--body);flex:1;line-height:1.55}
   .tpl-foot{display:flex;align-items:center;justify-content:space-between;margin-top:8px;gap:12px;flex-wrap:wrap}
   .price{font-family:var(--sans);font-weight:600;font-size:1.06rem;color:var(--ink);letter-spacing:.03em;font-variant-numeric:tabular-nums}
+  .price s{color:var(--muted);font-weight:500;font-size:.82rem;margin-right:8px;opacity:.8}
+  .save-chip{display:inline-block;font-family:var(--sans);font-size:.6rem;font-weight:600;letter-spacing:.1em;background:rgba(160,57,44,.1);color:#A0392C;border:1px solid rgba(160,57,44,.3);border-radius:20px;padding:3px 9px;margin-left:8px;vertical-align:2px}
+  .sold-line{display:flex;align-items:center;gap:7px;font-family:var(--sans);font-size:.72rem;font-weight:500;color:var(--muted);margin-top:10px}
+  .sold-line svg{color:var(--gold-deep);flex-shrink:0}
+  .sold-line b{color:var(--gold-deep);font-weight:600}
+  .fav-tag{position:absolute;top:12px;right:12px;z-index:3;display:inline-flex;align-items:center;gap:6px;background:var(--grad-gold);color:var(--forest-2);font-family:var(--sans);font-size:.6rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:7px 12px;border-radius:20px;box-shadow:0 10px 24px -10px rgba(143,110,42,.6)}
+  /* testimonials */
+  .tsec{background:var(--forest);color:var(--cream);position:relative;overflow:hidden}
+  .tsec .sec-head h2{color:var(--cream)}
+  .tgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(300px,100%),1fr));gap:18px;max-width:1080px;margin:0 auto}
+  .tcard{background:rgba(247,244,238,.05);border:1px solid rgba(198,161,79,.3);border-radius:14px;padding:clamp(24px,4vw,34px);display:flex;flex-direction:column;gap:14px;backdrop-filter:blur(2px)}
+  .tstars{color:var(--gold);letter-spacing:4px;font-size:.95rem}
+  .tcard q{quotes:none;font-family:var(--serif);font-size:1.12rem;font-style:italic;line-height:1.75;color:rgba(247,244,238,.92);flex:1}
+  .tcard q::before{content:'“';color:var(--gold);font-size:1.5em;line-height:0;vertical-align:-8px;margin-right:2px}
+  .twho{display:flex;flex-direction:column;gap:2px;border-top:1px solid rgba(198,161,79,.25);padding-top:14px}
+  .twho b{font-family:var(--sans);font-size:.8rem;font-weight:600;letter-spacing:.06em;color:var(--gold-light)}
+  .twho span{font-family:var(--sans);font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:rgba(247,244,238,.55)}
   .price.free{color:#2E5A43}
   .demo-link{font-family:var(--sans);font-size:.76rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase}
   .steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(220px,100%),1fr));gap:22px}
@@ -114,7 +131,8 @@
       <% templates.forEach(function(t){
         const sampleHref = '/sample/' + t.id + (t.kind === 'pdf' ? '.pdf' : t.kind === 'image' ? '.png' : '');
       %>
-      <div class="tpl-card panel reveal">
+      <div class="tpl-card panel reveal" style="position:relative">
+        <% if (t.id === favouriteId) { %><span class="fav-tag"><svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.6 7.1.7-5.4 4.8 1.6 7-6.2-3.7-6.2 3.7 1.6-7L2 9.3l7.1-.7z"/></svg>Guest Favourite</span><% } %>
         <a class="tpl-thumb thumb-<%= t.kind %> <%= (t.thumb && t.thumb.dark) || t.id === 'midnight-poruwa' ? 'dark' : '' %>" href="<%= sampleHref %>" target="_blank" rel="noopener" style="text-decoration:none<%= t.thumb && t.thumb.bg ? ';background:' + t.thumb.bg : '' %>">
           <div class="mini-frame" <%- t.thumb ? `style="border-color:${t.thumb.accent || 'var(--gold)'};${t.thumb.frameBg ? 'background:' + t.thumb.frameBg : ''}"` : '' %>>
             <div class="mini-mono" <%- t.thumb && t.thumb.accent ? `style="color:${t.thumb.accent}"` : '' %>>S &amp; D</div>
@@ -130,8 +148,11 @@
           </div>
           <h3><%= t.name %></h3>
           <p class="tag"><%= t.tagline %></p>
+          <% if (t.sold > 0) { %>
+          <div class="sold-line"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21s-7.5-4.8-10-9.3C.5 8 2.4 4.6 5.8 4.2 8 4 9.6 5.3 12 7.6c2.4-2.3 4-3.6 6.2-3.4 3.4.4 5.3 3.8 3.8 7.5C19.5 16.2 12 21 12 21z"/></svg>Chosen by <b><%= t.sold %> couple<%= t.sold === 1 ? '' : 's' %></b></div>
+          <% } %>
           <div class="tpl-foot">
-            <span class="price <%= t.price_lkr === 0 ? 'free' : '' %>"><%= formatLKR(t.price_lkr) %></span>
+            <span class="price <%= t.eff === 0 ? 'free' : '' %>"><% if (t.eff < t.price_lkr) { %><s><%= formatLKR(t.price_lkr) %></s><%= formatLKR(t.eff) %><span class="save-chip">SAVE <%= Math.round((1 - t.eff / t.price_lkr) * 100) %>%</span><% } else { %><%= formatLKR(t.eff) %><% } %></span>
             <a class="btn btn-gold" style="min-height:42px;padding:0 22px" href="/start/<%= t.id %>">Use this</a>
           </div>
           <a class="demo-link" href="<%= sampleHref %>" target="_blank" rel="noopener">Preview this design →</a>
@@ -141,6 +162,29 @@
     </div>
   </div>
 </section>
+
+<% if (testimonials && testimonials.length) { %>
+<section class="section tsec" id="love">
+  <div class="container">
+    <div class="sec-head reveal">
+      <span class="eyebrow" style="color:var(--gold-light)">Loved by Couples</span>
+      <h2>Words from our weddings</h2>
+    </div>
+    <div class="tgrid">
+      <% testimonials.forEach(function(r){ %>
+      <figure class="tcard reveal">
+        <div class="tstars"><%= '★'.repeat(r.rating) %><span style="opacity:.25"><%= '★'.repeat(5 - r.rating) %></span></div>
+        <q><%= r.text %></q>
+        <figcaption class="twho">
+          <b><%= r.author %></b>
+          <span><%= r.couple ? r.couple + ' · ' : '' %><%= r.template_id ? String(r.template_id).replace(/-/g, ' ') : '' %></span>
+        </figcaption>
+      </figure>
+      <% }) %>
+    </div>
+  </div>
+</section>
+<% } %>
 
 <section class="section" id="how" style="background:var(--ivory);border-top:1px solid var(--border);border-bottom:1px solid var(--border)">
   <div class="container">

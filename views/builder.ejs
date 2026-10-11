@@ -98,7 +98,7 @@
       <span class="eyebrow"><%= order.status === 'active' ? 'Live invitation' : 'Invitation builder' %></span>
       <h1><%= order.status === 'active' ? 'Edit your live invitation' : "Let's craft your invitation" %></h1>
     </div>
-    <div class="tpl">Template<br><b><%= tpl.name %></b> · <%= formatLKR(tpl.price_lkr) %></div>
+    <div class="tpl">Template<br><b><%= tpl.name %></b> · <% if (effPrice < tpl.price_lkr) { %><s style="opacity:.55"><%= formatLKR(tpl.price_lkr) %></s> <span style="color:#A0392C"><%= formatLKR(effPrice) %></span><% } else { %><%= formatLKR(effPrice) %><% } %></div>
   </div>
 
   <div class="progress" id="progress"></div>
@@ -136,7 +136,7 @@
 
 <script>
   window.ORDER = <%- JSON.stringify({ token: order.token, orderNo: order.order_no, kind: order.kind, status: order.status, slug: order.slug || null, data: order.data }) %>;
-  window.TPL = <%- JSON.stringify({ id: tpl.id, name: tpl.name, kind: tpl.kind, price: tpl.price_lkr, priceDisplay: formatLKR(tpl.price_lkr) }) %>;
+  window.TPL = <%- JSON.stringify({ id: tpl.id, name: tpl.name, kind: tpl.kind, price: effPrice, priceDisplay: formatLKR(effPrice), listPriceDisplay: effPrice < tpl.price_lkr ? formatLKR(tpl.price_lkr) : null }) %>;
   // Remember this draft on this device so the landing page can bring the user back
   try {
     var K = 'poruwe_orders';
@@ -145,6 +145,6 @@
     localStorage.setItem(K, JSON.stringify(list.slice(0, 5)));
   } catch (e) {}
 </script>
-<script src="/public/builder.js?v=5"></script>
+<script src="/public/builder.js?v=6"></script>
 </body>
 </html>

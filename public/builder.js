@@ -335,7 +335,7 @@
     }
     payMethod = payMethod && checkout.methods.includes(payMethod) ? payMethod : checkout.methods[0];
     box.innerHTML = `
-      <div class="price-line"><span class="lbl-t">Total</span><span class="amt">${checkout.priceDisplay}</span></div>
+      <div class="price-line"><span class="lbl-t">Total</span><span class="amt">${checkout.discounted ? `<s style="font-size:.9rem;opacity:.5;font-weight:500">${esc(checkout.listPriceDisplay)}</s> ` : ''}${checkout.priceDisplay}${checkout.discounted ? ` <span style="font-size:.62rem;font-weight:600;letter-spacing:.08em;background:rgba(160,57,44,.1);color:#A0392C;border:1px solid rgba(160,57,44,.3);border-radius:14px;padding:3px 8px;vertical-align:4px">SAVE ${checkout.savePct}%</span>` : ''}</span></div>
       <div class="method-tabs">
         ${checkout.methods.map((m) => `<div class="mtab ${m === payMethod ? 'sel' : ''}" data-m="${m}">${m === 'manual' ? 'Bank transfer' : 'Card / PayHere'}</div>`).join('')}
         ${checkout.payhereComingSoon ? '<div class="mtab soon">Card payments<small>PayHere — coming soon</small></div>' : ''}

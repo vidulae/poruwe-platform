@@ -147,6 +147,13 @@
     </div>
     <% } %>
 
+    <% if (img.groom || img.bride) { %>
+    <div class="rv" style="display:flex;justify-content:center;gap:26px;margin-top:40px;flex-wrap:wrap">
+      <% if (img.groom) { %><div style="text-align:center"><img src="<%= img.groom %>" alt="<%= s.groom %>" loading="lazy" style="width:108px;height:108px;border-radius:50%;object-fit:cover;border:3px solid var(--sheet);box-shadow:0 0 0 1px var(--line), 0 14px 30px -14px rgba(62,58,51,.45)" /><div style="font-style:italic;color:var(--faded);margin-top:8px;font-size:1.02rem"><%= s.groom %></div></div><% } %>
+      <% if (img.bride) { %><div style="text-align:center"><img src="<%= img.bride %>" alt="<%= s.bride %>" loading="lazy" style="width:108px;height:108px;border-radius:50%;object-fit:cover;border:3px solid var(--sheet);box-shadow:0 0 0 1px var(--line), 0 14px 30px -14px rgba(62,58,51,.45)" /><div style="font-style:italic;color:var(--faded);margin-top:8px;font-size:1.02rem"><%= s.bride %></div></div><% } %>
+    </div>
+    <% } %>
+
     <div class="sign rv">
       <p class="yours">With all our love,</p>
       <p class="names"><%= s.groom %> &amp; <%= s.bride %></p>
