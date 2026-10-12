@@ -153,7 +153,7 @@
           <% } %>
           <div class="tpl-foot">
             <span class="price <%= t.eff === 0 ? 'free' : '' %>"><% if (t.eff < t.price_lkr) { %><s><%= formatLKR(t.price_lkr) %></s><%= formatLKR(t.eff) %><span class="save-chip">SAVE <%= Math.round((1 - t.eff / t.price_lkr) * 100) %>%</span><% } else { %><%= formatLKR(t.eff) %><% } %></span>
-            <a class="btn btn-gold" style="min-height:42px;padding:0 22px" href="/start/<%= t.id %>">Use this</a>
+            <a class="btn btn-gold" style="min-height:42px;padding:0 22px" href="/start/<%= t.id %>" rel="nofollow">Use this</a>
           </div>
           <a class="demo-link" href="<%= sampleHref %>" target="_blank" rel="noopener">Preview this design →</a>
         </div>

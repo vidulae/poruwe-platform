@@ -173,6 +173,11 @@ async function cardPhotoDataUri(order) {
 /* ------------------------------- public pages ------------------------------ */
 app.get('/healthz', (req, res) => res.json({ ok: true }));
 
+// Crawlers following /start links were mass-creating draft orders
+app.get('/robots.txt', (req, res) => res.type('text/plain').send(
+  'User-agent: *\nDisallow: /start/\nDisallow: /b/\nDisallow: /p/\nDisallow: /status/\nDisallow: /d/\nDisallow: /api/\n'
+));
+
 app.get('/', asyncH(async (req, res) => {
   const templates = await store.listTemplates(true);
   // card art (thumb) and seed social proof are design data from the catalog, not the DB
