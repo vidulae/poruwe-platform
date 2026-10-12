@@ -195,7 +195,24 @@ app.get('/', asyncH(async (req, res) => {
 }));
 
 const createLimiter = new Map(); // ip -> {count, resetAt}
+
+// Creating a draft is a POST so crawlers hitting /start links never leave orders behind.
+// Humans pass through an invisible auto-submitting hop (no-JS visitors get a button).
 app.get('/start/:templateId', asyncH(async (req, res) => {
+  const tpl = await store.getTemplate(req.params.templateId);
+  if (!tpl || !tpl.active) return res.status(404).render('notfound');
+  res.send(`<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="robots" content="noindex" />
+<title>Opening the builder · Poruwe</title>
+<style>body{margin:0;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;background:#F6F3ED;color:#13251F;font-family:Georgia,serif;text-align:center;padding:24px}
+i{width:34px;height:34px;border:2px solid rgba(198,161,79,.3);border-top-color:#C8A24B;border-radius:50%;animation:s 1s linear infinite}@keyframes s{to{transform:rotate(360deg)}}
+button{border:0;background:#C8A24B;color:#1A2C25;font:600 13px/1 sans-serif;letter-spacing:.14em;text-transform:uppercase;padding:16px 30px;border-radius:6px;cursor:pointer}</style></head>
+<body><i></i><p>Preparing your ${tpl.name} builder…</p>
+<form method="POST" action="/start/${tpl.id}" id="go"><noscript><button type="submit">Open the builder</button></noscript></form>
+<script>document.getElementById('go').submit()</script></body></html>`);
+}));
+
+app.post('/start/:templateId', asyncH(async (req, res) => {
   const tpl = await store.getTemplate(req.params.templateId);
   if (!tpl || !tpl.active) return res.status(404).render('notfound');
   const ip = req.ip;
@@ -207,7 +224,7 @@ app.get('/start/:templateId', asyncH(async (req, res) => {
   const data = sanitizeData({ story: defaultStory(), program: defaultProgram(), contacts: defaultContacts(), rsvp: { wa: '94770000001' } });
   const order = await store.createOrder(tpl.id, tpl.kind, data);
   await store.audit(order.id, 'created', { template: tpl.id });
-  res.redirect(`/b/${order.token}`);
+  res.redirect(303, `/b/${order.token}`);
 }));
 
 app.get('/b/:token', asyncH(async (req, res) => {
